@@ -22,9 +22,7 @@ CREATE TABLE IF NOT EXISTS university.students (
 CREATE TABLE IF NOT EXISTS university.teachers (
 	id SERIAL PRIMARY KEY, 
 	first_name VARCHAR(50) NOT NULL, 
-	last_name VARCHAR(50) NOT NULL,
-	course_id INTEGER, 
-	FOREIGN KEY (course_id) REFERENCES university.courses(id)
+	last_name VARCHAR(50) NOT NULL 
 );
 
 CREATE TABLE IF NOT EXISTS university.students_courses (
@@ -41,9 +39,9 @@ CREATE TABLE IF NOT EXISTS university.teachers_courses (
 	FOREIGN KEY (course_id) REFERENCES university.courses(id) 
 );
 
-CREATE TABLE IF NOT EXISTS university.shedule (
+CREATE TABLE IF NOT EXISTS university.schedule (
 	id SERIAL PRIMARY KEY, 
-	date_time VARCHAR(50) NOT NULL, 
+	date_time TIMESTAMP NOT NULL, 
 	group_id INTEGER, 
 	course_id INTEGER, 
 	FOREIGN KEY (group_id) REFERENCES university.groups(id), 
