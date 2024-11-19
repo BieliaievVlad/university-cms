@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
 
-import ua.foxminded.tasks.university_cms.db.service.DataGeneratorService;
+import ua.foxminded.tasks.university_cms.service.DataGeneratorService;
 
 @SpringBootApplication
 public class UniversityCmsApplication {
