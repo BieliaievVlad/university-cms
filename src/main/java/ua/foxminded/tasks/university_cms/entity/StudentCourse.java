@@ -17,19 +17,19 @@ import lombok.*;
 @RequiredArgsConstructor
 public class StudentCourse {
 
-    @EmbeddedId
-    private StudentCourseId id;
-    
-    @ManyToOne
-    @MapsId("studentId")
-    @JoinColumn(name = "student_id")
-    @NonNull
-    private Student student;
-    
-    @ManyToOne
-    @MapsId("courseId")
-    @JoinColumn(name = "course_id")
-    @NonNull
-    private Course course;
-    
+	@EmbeddedId
+	private StudentCourseId id;
+
+	@ManyToOne
+	@MapsId("studentId")
+	@JoinColumn(name = "student_id")
+	@NonNull
+	private Student student;
+
+	@ManyToOne
+	@MapsId("courseId")
+	@JoinColumn(name = "course_id")
+	@NonNull
+	private Course course;
+
 }

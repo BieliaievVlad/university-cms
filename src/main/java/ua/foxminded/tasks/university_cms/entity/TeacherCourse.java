@@ -19,20 +19,20 @@ import lombok.Setter;
 @NoArgsConstructor
 @RequiredArgsConstructor
 public class TeacherCourse {
-	
+
 	@EmbeddedId
 	private TeacherCourseId id;
-	
+
 	@ManyToOne
 	@MapsId("teacherId")
 	@JoinColumn(name = "teacher_id")
 	@NonNull
 	private Teacher teacher;
-	
-    @ManyToOne
-    @MapsId("courseId")
-    @JoinColumn(name = "course_id")
-    @NonNull
-    private Course course;
+
+	@ManyToOne
+	@MapsId("courseId")
+	@JoinColumn(name = "course_id")
+	@NonNull
+	private Course course;
 
 }

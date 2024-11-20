@@ -16,13 +16,13 @@ import lombok.*;
 @AllArgsConstructor
 @RequiredArgsConstructor
 public class Course {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
+
 	@Column(name = "name")
 	@NonNull
 	private String name;
-	
+
 }

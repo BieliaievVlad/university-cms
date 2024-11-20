@@ -11,11 +11,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class DBUtil {
-	
+
 	static Logger logger = LoggerFactory.getLogger(DBUtil.class);
 
 	public static String readQueryFromFile(Path filePath) {
-		
+
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 		String resourcePath = filePath.toString().replace("\\", "/");
 

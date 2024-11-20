@@ -20,48 +20,47 @@ import ua.foxminded.tasks.university_cms.repository.TeacherRepository;
 @ActiveProfiles("test")
 class TeacherServiceTest {
 
-    @MockBean
-    TeacherRepository repository;
-    
-    @Autowired
-    TeacherService service;
-	
+	@MockBean
+	TeacherRepository repository;
+
+	@Autowired
+	TeacherService service;
 
 	@Test
 	void findAll_ValidValue_ReturnsExpectedList() {
-		
+
 		Teacher teacher = new Teacher(1L, "FirstName", "LastName");
-        List<Teacher> expectedTeacher = Arrays.asList(teacher);
-        when(repository.findAll()).thenReturn(expectedTeacher);
-        
-        List<Teacher> actualTeacher = service.findAll();
-        
-        assertEquals(expectedTeacher, actualTeacher);
-        verify(repository, times(1)).findAll();
+		List<Teacher> expectedTeacher = Arrays.asList(teacher);
+		when(repository.findAll()).thenReturn(expectedTeacher);
+
+		List<Teacher> actualTeacher = service.findAll();
+
+		assertEquals(expectedTeacher, actualTeacher);
+		verify(repository, times(1)).findAll();
 	}
 
 	@Test
 	void findById_ValidValue_ReturnsExpected() {
-		
+
 		Long searchId = 1L;
 		Teacher expected = new Teacher(1L, "FirstName", "LastName");
 		Optional<Teacher> optTeacher = Optional.of(expected);
 		when(repository.findById(searchId)).thenReturn(optTeacher);
-		
+
 		Teacher actual = service.findById(searchId);
-		
+
 		assertEquals(expected, actual);
 		verify(repository, times(1)).findById(searchId);
-		
+
 	}
 
 	@Test
 	void save_ValidValue_CalledOnce() {
 		Teacher teacher = new Teacher(1L, "FirstName", "LastName");
 		when(repository.save(teacher)).thenReturn(teacher);
-		
+
 		service.save(teacher);
-		
+
 		verify(repository, times(1)).save(teacher);
 	}
 
@@ -71,9 +70,9 @@ class TeacherServiceTest {
 		Teacher teacher = new Teacher(1L, "FirstName", "LastName");
 		when(repository.findById(id)).thenReturn(Optional.of(teacher));
 		doNothing().when(repository).delete(teacher);
-		
+
 		service.delete(id);
-		
+
 		verify(repository, times(1)).delete(teacher);
 	}
 

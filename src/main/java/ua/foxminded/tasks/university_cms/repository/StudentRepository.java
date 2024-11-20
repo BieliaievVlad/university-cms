@@ -8,5 +8,4 @@ import ua.foxminded.tasks.university_cms.entity.Student;
 @Repository
 public interface StudentRepository extends JpaRepository<Student, Long> {
 
-	
 }

@@ -19,20 +19,20 @@ import lombok.*;
 @AllArgsConstructor
 @RequiredArgsConstructor
 public class Schedule {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
+
 	@Column(name = "date_time", nullable = false)
 	@NonNull
 	private LocalDateTime dateTime;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "group_id")
 	@NonNull
 	private Group group;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "course_id")
 	@NonNull

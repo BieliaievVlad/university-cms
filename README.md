@@ -7,6 +7,12 @@
 - Java 17 (или более поздняя версия)  
 - Maven  
 - PostgreSQL  
+- Docker Desktop
+
+## Сборка  
+1. Используйте команду из корневой папки проекта: 
+ 
+	mvn clean package
 
 ## Установка  
 1. Создайте базу данных PostgreSQL 'univercity_cms'  

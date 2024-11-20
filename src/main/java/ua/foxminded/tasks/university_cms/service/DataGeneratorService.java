@@ -46,11 +46,11 @@ public class DataGeneratorService {
 			executeSqlQuery(generateTeachersCourses);
 			executeSqlQuery(generateSchedule);
 			executeSqlQuery(dropTempTables);
-			
+
 			logger.info("Data successfully generated");
 
 		} else {
-			
+
 			logger.info("Database is not empty. Data generation skipped");
 		}
 	}
@@ -68,17 +68,17 @@ public class DataGeneratorService {
 		generateSchedule = DBUtil.readQueryFromFile(GENERATE_SCHEDULE);
 	}
 
-    private void executeSqlQuery(String sql) {
-    	
-        try {
-            jdbcTemplate.update(sql);
-        } catch (Exception e) {
-            logger.error("Error executing SQL query: {%s}, %s", sql, e);
-        }
-    }
+	private void executeSqlQuery(String sql) {
+
+		try {
+			jdbcTemplate.update(sql);
+		} catch (Exception e) {
+			logger.error("Error executing SQL query: {%s}, %s", sql, e);
+		}
+	}
 
 	private boolean isDatabaseEmpty() {
-		
+
 		String sql = "SELECT COUNT(*) FROM university.students";
 		Integer count = jdbcTemplate.queryForObject(sql, Integer.class);
 		return count == null || count == 0;

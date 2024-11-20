@@ -14,13 +14,13 @@ public class UniversityCmsApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(UniversityCmsApplication.class, args);
 	}
-	
-    @Bean
-    @Profile("!test")
-    public CommandLineRunner commandLineRunner(DataGeneratorService dataGeneratorService) {
-        return args -> {
-        	dataGeneratorService.generateData();
-        };
-    }
+
+	@Bean
+	@Profile("!test")
+	public CommandLineRunner commandLineRunner(DataGeneratorService dataGeneratorService) {
+		return args -> {
+			dataGeneratorService.generateData();
+		};
+	}
 
 }

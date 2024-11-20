@@ -19,10 +19,10 @@ import ua.foxminded.tasks.university_cms.repository.StudentRepository;
 @SpringBootTest
 @ActiveProfiles("test")
 class StudentServiceTest {
-	
+
 	@MockBean
 	StudentRepository repository;
-	
+
 	@Autowired
 	StudentService service;
 
@@ -31,34 +31,34 @@ class StudentServiceTest {
 		Student student = new Student("FirstName", "LastName");
 		List<Student> expectedList = Arrays.asList(student);
 		when(repository.findAll()).thenReturn(expectedList);
-		
+
 		List<Student> actualList = service.findAll();
-		
-        assertEquals(expectedList, actualList);
-        verify(repository, times(1)).findAll();
+
+		assertEquals(expectedList, actualList);
+		verify(repository, times(1)).findAll();
 	}
 
 	@Test
 	void findById_ValidValue_ReturnsExpected() {
-		
+
 		Long searchId = 1L;
 		Student expected = new Student("FirstName", "LastName");
 		Optional<Student> optStudent = Optional.of(expected);
 		when(repository.findById(searchId)).thenReturn(optStudent);
-		
+
 		Student actual = service.findById(searchId);
-		
+
 		assertEquals(expected, actual);
 		verify(repository, times(1)).findById(searchId);
 	}
 
 	@Test
 	void save_ValidValue_CalledOnce() {
-		Student student = new Student(1L,"FirstName", "LastName");
+		Student student = new Student(1L, "FirstName", "LastName");
 		when(repository.save(student)).thenReturn(student);
-		
+
 		service.save(student);
-		
+
 		verify(repository, times(1)).save(student);
 	}
 
@@ -68,9 +68,9 @@ class StudentServiceTest {
 		Student student = new Student("FirstName", "LastName");
 		when(repository.findById(id)).thenReturn(Optional.of(student));
 		doNothing().when(repository).delete(student);
-		
+
 		service.delete(id);
-		
+
 		verify(repository, times(1)).delete(student);
 	}
 

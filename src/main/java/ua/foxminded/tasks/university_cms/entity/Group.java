@@ -16,17 +16,17 @@ import lombok.*;
 @AllArgsConstructor
 @RequiredArgsConstructor
 public class Group {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
+
 	@Column(name = "name", nullable = false)
 	@NonNull
 	private String name;
-	
+
 	@Column(name = "num_students")
 	@NonNull
 	private Long numStudents;
-	
+
 }

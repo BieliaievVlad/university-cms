@@ -19,12 +19,12 @@ import ua.foxminded.tasks.university_cms.repository.StudentCourseRepository;
 @SpringBootTest
 @ActiveProfiles("test")
 class StudentCourseServiceTest {
-	
-    @MockBean
-    StudentCourseRepository repository;
-    
-    @Autowired
-    StudentCourseService service;
+
+	@MockBean
+	StudentCourseRepository repository;
+
+	@Autowired
+	StudentCourseService service;
 
 	@Test
 	void save_ValidValue_CalledOnce() {
@@ -32,9 +32,9 @@ class StudentCourseServiceTest {
 		Student student = new Student("FirstName", "LastName");
 		StudentCourse studentCourse = new StudentCourse(student, course);
 		when(repository.save(studentCourse)).thenReturn(studentCourse);
-		
+
 		service.save(studentCourse);
-		
+
 		verify(repository, times(1)).save(studentCourse);
 	}
 
@@ -46,9 +46,9 @@ class StudentCourseServiceTest {
 		StudentCourseId id = new StudentCourseId(studentCourse.getStudent().getId(), studentCourse.getCourse().getId());
 		when(repository.findById(id)).thenReturn(Optional.of(studentCourse));
 		doNothing().when(repository).delete(studentCourse);
-		
+
 		service.delete(studentCourse);
-		
+
 		verify(repository, times(1)).delete(studentCourse);
 	}
 

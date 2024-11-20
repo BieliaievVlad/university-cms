@@ -20,48 +20,47 @@ import ua.foxminded.tasks.university_cms.repository.CourseRepository;
 @ActiveProfiles("test")
 class CourseServiceTest {
 
-    @MockBean
-    CourseRepository repository;
-    
-    @Autowired
-    CourseService service;
-	
+	@MockBean
+	CourseRepository repository;
+
+	@Autowired
+	CourseService service;
 
 	@Test
 	void findAll_ValidValue_ReturnsExpectedList() {
-		
-        Course course = new Course(1L, "Course_1");
-        List<Course> expectedList = Arrays.asList(course);
-        when(repository.findAll()).thenReturn(expectedList);
-        
-        List<Course> actualList = service.findAll();
-        
-        assertEquals(expectedList, actualList);
-        verify(repository, times(1)).findAll();
+
+		Course course = new Course(1L, "Course_1");
+		List<Course> expectedList = Arrays.asList(course);
+		when(repository.findAll()).thenReturn(expectedList);
+
+		List<Course> actualList = service.findAll();
+
+		assertEquals(expectedList, actualList);
+		verify(repository, times(1)).findAll();
 	}
 
 	@Test
 	void findById_ValidValue_ReturnsExpected() {
-		
+
 		Long searchId = 1L;
 		Course expected = new Course(1L, "Course_1");
 		Optional<Course> optCourse = Optional.of(expected);
 		when(repository.findById(searchId)).thenReturn(optCourse);
-		
+
 		Course actual = service.findById(searchId);
-		
+
 		assertEquals(expected, actual);
 		verify(repository, times(1)).findById(searchId);
-		
+
 	}
 
 	@Test
 	void save_ValidValue_CalledOnce() {
 		Course course = new Course(1L, "Course_1");
 		when(repository.save(course)).thenReturn(course);
-		
+
 		service.save(course);
-		
+
 		verify(repository, times(1)).save(course);
 	}
 
@@ -71,9 +70,9 @@ class CourseServiceTest {
 		Course course = new Course(1L, "Course_1");
 		when(repository.findById(id)).thenReturn(Optional.of(course));
 		doNothing().when(repository).delete(course);
-		
+
 		service.delete(id);
-		
+
 		verify(repository, times(1)).delete(course);
 	}
 

@@ -23,32 +23,31 @@ import ua.foxminded.tasks.university_cms.repository.ScheduleRepository;
 @ActiveProfiles("test")
 class ScheduleServiceTest {
 
-    @MockBean
-    ScheduleRepository repository;
-    
-    @Autowired
-    ScheduleService service;
-	
+	@MockBean
+	ScheduleRepository repository;
+
+	@Autowired
+	ScheduleService service;
 
 	@Test
 	void findAll_ValidValue_ReturnsExpectedList() {
-		
+
 		Course course = new Course(1L, "Course_1");
 		Group group = new Group(1L, "Group_1", 10L);
 		LocalDateTime date = LocalDateTime.of(2024, 10, 10, 11, 30);
 		Schedule schedule = new Schedule(date, group, course);
-        List<Schedule> expectedList = Arrays.asList(schedule);
-        when(repository.findAll()).thenReturn(expectedList);
-        
-        List<Schedule> actualList = service.findAll();
-        
-        assertEquals(expectedList, actualList);
-        verify(repository, times(1)).findAll();
+		List<Schedule> expectedList = Arrays.asList(schedule);
+		when(repository.findAll()).thenReturn(expectedList);
+
+		List<Schedule> actualList = service.findAll();
+
+		assertEquals(expectedList, actualList);
+		verify(repository, times(1)).findAll();
 	}
 
 	@Test
 	void findById_ValidValue_ReturnsExpected() {
-		
+
 		Long searchId = 1L;
 		Course course = new Course(1L, "Course_1");
 		Group group = new Group(1L, "Group_1", 10L);
@@ -56,12 +55,12 @@ class ScheduleServiceTest {
 		Schedule expected = new Schedule(date, group, course);
 		Optional<Schedule> optSсhedule = Optional.of(expected);
 		when(repository.findById(searchId)).thenReturn(optSсhedule);
-		
+
 		Schedule actual = service.findById(searchId);
-		
+
 		assertEquals(expected, actual);
 		verify(repository, times(1)).findById(searchId);
-		
+
 	}
 
 	@Test
@@ -71,9 +70,9 @@ class ScheduleServiceTest {
 		LocalDateTime date = LocalDateTime.of(2024, 10, 10, 11, 30);
 		Schedule schedule = new Schedule(1L, date, group, course);
 		when(repository.save(schedule)).thenReturn(schedule);
-		
+
 		service.save(schedule);
-		
+
 		verify(repository, times(1)).save(schedule);
 	}
 
@@ -86,9 +85,9 @@ class ScheduleServiceTest {
 		Schedule schedule = new Schedule(date, group, course);
 		when(repository.findById(id)).thenReturn(Optional.of(schedule));
 		doNothing().when(repository).delete(schedule);
-		
+
 		service.delete(id);
-		
+
 		verify(repository, times(1)).delete(schedule);
 	}
 
