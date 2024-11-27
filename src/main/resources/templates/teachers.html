@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Teachers</title>
+<link rel="stylesheet" href="/webjars/bootstrap/5.2.3/css/bootstrap.min.css">
+</head>
+<body>
+    <!-- Вставляем навигационную панель из layout.html -->
+    <div th:replace="~{layout :: navbar}"></div>
+	<div class="container mt-4">
+		<h1 class="text-center">Teachers</h1>
+
+		<ul class="list-group">
+			<th:block th:each="teacher : ${teachers}">
+				<li class="list-group-item"
+					th:text="${teacher.firstName + ' ' + teacher.lastName}"></li>
+			</th:block>
+		</ul>
+
+		<div class="mt-3">
+			<a href="/" class="btn btn-primary">Back to Home</a>
+		</div>
+	</div>
+
+    <script src="/webjars/bootstrap/5.2.3/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
