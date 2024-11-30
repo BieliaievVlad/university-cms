@@ -12,7 +12,7 @@ public class MainController {
     String appName;
 
     @GetMapping("/")
-    public String homePage(Model model) {
+    public String showHomePage(Model model) {
         model.addAttribute("appName", appName);
         return "home";
     }

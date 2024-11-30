@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Teachers</title>
+<title>Courses</title>
 <link rel="stylesheet"
 	href="/webjars/bootstrap/5.2.3/css/bootstrap.min.css">
 </head>
@@ -12,12 +12,11 @@
 	<div th:replace="~{layout :: navbar}"></div>
 
 	<div class="container mt-4">
-		<h1 class="text-center">Teachers</h1>
+		<h1 class="text-center">Courses</h1>
 
 		<ul class="list-group">
-			<th:block th:each="teacher : ${teachers}">
-				<li class="list-group-item"
-					th:text="${teacher.firstName + ' ' + teacher.lastName}"></li>
+			<th:block th:each="course : ${courses}">
+				<li class="list-group-item" th:text="${course.name}"></li>
 			</th:block>
 		</ul>
 
