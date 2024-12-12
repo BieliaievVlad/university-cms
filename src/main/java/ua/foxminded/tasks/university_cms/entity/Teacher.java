@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Teacher extends Person {
 
-	public Teacher(Long id, String firstName, String lastName) {
-		super(id, firstName, lastName);
+	public Teacher(Long id, String firstName, String lastName, User user) {
+		super(id, firstName, lastName, user);
 	}
 
 	public Teacher(String firstName, String lastName) {

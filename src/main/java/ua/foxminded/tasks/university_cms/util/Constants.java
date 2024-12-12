@@ -16,5 +16,7 @@ public class Constants {
 	public static final Path GENERATE_TEACHERS_COURSES = Paths.get("sql", "testDataGeneration",
 			"generate_teachers_courses.sql");
 	public static final Path GENERATE_SCHEDULE = Paths.get("sql", "testDataGeneration", "generate_schedule.sql");
+	public static final Path GENERATE_USERS = Paths.get("sql", "testDataGeneration", "generate_users.sql");
+	public static final Path GENERATE_ROLES = Paths.get("sql", "testDataGeneration", "generate_roles.sql");
 
 }

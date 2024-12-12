@@ -17,13 +17,13 @@ public class Student extends Person {
 	@JoinColumn(name = "group_id", nullable = true)
 	private Group group;
 
-	public Student(Long id, String firstName, String lastName, Group group) {
-		super(id, firstName, lastName);
+	public Student(Long id, String firstName, String lastName, User user, Group group) {
+		super(id, firstName, lastName, user);
 		this.group = group;
 	}
 
-	public Student(Long id, String firstName, String lastName) {
-		super(id, firstName, lastName);
+	public Student(Long id, String firstName, String lastName, User user) {
+		super(id, firstName, lastName, user);
 	}
 
 	public Student(String firstName, String lastName, Group group) {
