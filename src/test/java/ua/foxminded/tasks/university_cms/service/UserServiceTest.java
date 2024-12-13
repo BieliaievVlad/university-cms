@@ -29,7 +29,7 @@ class UserServiceTest {
 	@Test
 	void findAll_ValidValue_ReturnsExpectedList() {
 
-		User user = new User(1L, "username", "password", "role");
+		User user = new User("username", "password");
 		List<User> expectedList = Arrays.asList(user);
 		when(repository.findAll()).thenReturn(expectedList);
 
@@ -43,7 +43,7 @@ class UserServiceTest {
 	void findById_ValidValue_ReturnsExpected() {
 
 		Long searchId = 1L;
-		User expected = new User(1L, "username", "password", "role");
+		User expected = new User("username", "password");
 		Optional<User> optUser = Optional.of(expected);
 		when(repository.findById(searchId)).thenReturn(optUser);
 
@@ -56,7 +56,7 @@ class UserServiceTest {
 	@Test
 	void save_ValidValue_CalledOnce() {
 
-		User user = new User(1L, "username", "password", "role");
+		User user = new User("username", "password");
 		when(repository.save(user)).thenReturn(user);
 
 		service.save(user);
@@ -68,7 +68,7 @@ class UserServiceTest {
 	void delete_ValidValue_CalledOnce() {
 
 		Long id = 1L;
-		User user = new User(1L, "username", "password", "role");
+		User user = new User("username", "password");
 		when(repository.findById(id)).thenReturn(Optional.of(user));
 		doNothing().when(repository).delete(user);
 

@@ -3,7 +3,6 @@ package ua.foxminded.tasks.university_cms.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -35,9 +34,10 @@ public class SecurityConfig {
             	.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
             	.and()
             .authorizeRequests()
-            	.requestMatchers("/", "/resources/**", "/css/**", "/webjars/**", "/login").permitAll()
-                .requestMatchers("/users", "/students", "/teachers", "/courses").hasRole("ADMIN")
-                .requestMatchers("/students", "/teachers", "/courses").hasAnyRole("STAFF", "TEACHER", "STUDENT")
+            	.requestMatchers("/", "/login").permitAll()
+            	.requestMatchers("/static/**", "/css/**", "/js/**", "/images/**", "/webjars/**").permitAll()
+                .requestMatchers("/users").hasRole("ADMIN")
+                .requestMatchers("/students", "/teachers", "/courses").hasAnyRole("ADMIN", "STAFF", "TEACHER", "STUDENT")
                 .anyRequest().authenticated();
 
         httpSecurity

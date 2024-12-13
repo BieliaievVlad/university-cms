@@ -1,0 +1,6 @@
+INSERT INTO university.roles(name) 
+VALUES 
+('ROLE_ADMIN'),
+('ROLE_STAFF'),
+('ROLE_TEACHER'),
+('ROLE_STUDENT');

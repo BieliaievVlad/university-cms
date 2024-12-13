@@ -30,7 +30,7 @@ class TeacherServiceTest {
 	@Test
 	void findAll_ValidValue_ReturnsExpectedList() {
 
-		User user = new User(1L, "login", "password", "role");
+		User user = new User("username", "password");
 		Teacher teacher = new Teacher(1L, "FirstName", "LastName", user);
 		List<Teacher> expectedTeacher = Arrays.asList(teacher);
 		when(repository.findAll()).thenReturn(expectedTeacher);
@@ -58,7 +58,7 @@ class TeacherServiceTest {
 
 	@Test
 	void save_ValidValue_CalledOnce() {
-		User user = new User(1L, "login", "password", "role");
+		User user = new User("username", "password");
 		Teacher teacher = new Teacher(1L, "FirstName", "LastName", user);
 		when(repository.save(teacher)).thenReturn(teacher);
 

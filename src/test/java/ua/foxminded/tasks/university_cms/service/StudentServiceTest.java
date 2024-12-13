@@ -55,7 +55,7 @@ class StudentServiceTest {
 
 	@Test
 	void save_ValidValue_CalledOnce() {
-		User user = new User(1L, "login", "password", "role");
+		User user = new User("username", "password");
 		Student student = new Student(1L, "FirstName", "LastName", user);
 		when(repository.save(student)).thenReturn(student);
 
