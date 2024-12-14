@@ -1,3 +1,11 @@
+User administration flow
+
+Given user is logged on as Admin
+
+- User can see/navigate User menu
+- User can see/add/delete users
+
+
 Teacher can view own schedule flow:  
 
 Given user is logged on as Teacher  
