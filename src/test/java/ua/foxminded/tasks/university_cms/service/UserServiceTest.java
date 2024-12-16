@@ -13,27 +13,27 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 
-import ua.foxminded.tasks.university_cms.entity.Student;
 import ua.foxminded.tasks.university_cms.entity.User;
-import ua.foxminded.tasks.university_cms.repository.StudentRepository;
+import ua.foxminded.tasks.university_cms.repository.UserRepository;
 
 @SpringBootTest
 @ActiveProfiles("test")
-class StudentServiceTest {
+class UserServiceTest {
 
 	@MockBean
-	StudentRepository repository;
+	UserRepository repository;
 
 	@Autowired
-	StudentService service;
+	UserService service;
 
 	@Test
 	void findAll_ValidValue_ReturnsExpectedList() {
-		Student student = new Student("FirstName", "LastName");
-		List<Student> expectedList = Arrays.asList(student);
+
+		User user = new User("username", "password");
+		List<User> expectedList = Arrays.asList(user);
 		when(repository.findAll()).thenReturn(expectedList);
 
-		List<Student> actualList = service.findAll();
+		List<User> actualList = service.findAll();
 
 		assertEquals(expectedList, actualList);
 		verify(repository, times(1)).findAll();
@@ -43,11 +43,11 @@ class StudentServiceTest {
 	void findById_ValidValue_ReturnsExpected() {
 
 		Long searchId = 1L;
-		Student expected = new Student("FirstName", "LastName");
-		Optional<Student> optStudent = Optional.of(expected);
-		when(repository.findById(searchId)).thenReturn(optStudent);
+		User expected = new User("username", "password");
+		Optional<User> optUser = Optional.of(expected);
+		when(repository.findById(searchId)).thenReturn(optUser);
 
-		Student actual = service.findById(searchId);
+		User actual = service.findById(searchId);
 
 		assertEquals(expected, actual);
 		verify(repository, times(1)).findById(searchId);
@@ -55,25 +55,37 @@ class StudentServiceTest {
 
 	@Test
 	void save_ValidValue_CalledOnce() {
+
 		User user = new User("username", "password");
-		Student student = new Student(1L, "FirstName", "LastName", user);
-		when(repository.save(student)).thenReturn(student);
+		when(repository.save(user)).thenReturn(user);
 
-		service.save(student);
+		service.save(user);
 
-		verify(repository, times(1)).save(student);
+		verify(repository, times(1)).save(user);
 	}
 
 	@Test
 	void delete_ValidValue_CalledOnce() {
+
 		Long id = 1L;
-		Student student = new Student("FirstName", "LastName");
-		when(repository.findById(id)).thenReturn(Optional.of(student));
-		doNothing().when(repository).delete(student);
+		User user = new User("username", "password");
+		when(repository.findById(id)).thenReturn(Optional.of(user));
+		doNothing().when(repository).delete(user);
 
 		service.delete(id);
 
-		verify(repository, times(1)).delete(student);
+		verify(repository, times(1)).delete(user);
+	}
+	
+	@Test
+	void loadUserByUsername_validUsername_CalledOnce() {
+		String username = "username";
+		User user = new User("username", "password");
+		when(repository.findByUsername(username)).thenReturn(user);
+		
+		service.loadUserByUsername(username);
+		
+		verify(repository, times(1)).findByUsername(username);
 	}
 
 }

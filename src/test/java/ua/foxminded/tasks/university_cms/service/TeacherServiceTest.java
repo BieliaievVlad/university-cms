@@ -14,6 +14,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 
 import ua.foxminded.tasks.university_cms.entity.Teacher;
+import ua.foxminded.tasks.university_cms.entity.User;
 import ua.foxminded.tasks.university_cms.repository.TeacherRepository;
 
 @SpringBootTest
@@ -29,7 +30,8 @@ class TeacherServiceTest {
 	@Test
 	void findAll_ValidValue_ReturnsExpectedList() {
 
-		Teacher teacher = new Teacher(1L, "FirstName", "LastName");
+		User user = new User("username", "password");
+		Teacher teacher = new Teacher(1L, "FirstName", "LastName", user);
 		List<Teacher> expectedTeacher = Arrays.asList(teacher);
 		when(repository.findAll()).thenReturn(expectedTeacher);
 
@@ -43,7 +45,7 @@ class TeacherServiceTest {
 	void findById_ValidValue_ReturnsExpected() {
 
 		Long searchId = 1L;
-		Teacher expected = new Teacher(1L, "FirstName", "LastName");
+		Teacher expected = new Teacher("FirstName", "LastName");
 		Optional<Teacher> optTeacher = Optional.of(expected);
 		when(repository.findById(searchId)).thenReturn(optTeacher);
 
@@ -56,7 +58,8 @@ class TeacherServiceTest {
 
 	@Test
 	void save_ValidValue_CalledOnce() {
-		Teacher teacher = new Teacher(1L, "FirstName", "LastName");
+		User user = new User("username", "password");
+		Teacher teacher = new Teacher(1L, "FirstName", "LastName", user);
 		when(repository.save(teacher)).thenReturn(teacher);
 
 		service.save(teacher);
@@ -67,7 +70,7 @@ class TeacherServiceTest {
 	@Test
 	void delete_ValidValue_CalledOnce() {
 		Long id = 1L;
-		Teacher teacher = new Teacher(1L, "FirstName", "LastName");
+		Teacher teacher = new Teacher("FirstName", "LastName");
 		when(repository.findById(id)).thenReturn(Optional.of(teacher));
 		doNothing().when(repository).delete(teacher);
 

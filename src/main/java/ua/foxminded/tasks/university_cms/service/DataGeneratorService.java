@@ -25,6 +25,8 @@ public class DataGeneratorService {
 	private String generateTeachers;
 	private String generateTeachersCourses;
 	private String generateSchedule;
+	private String generateUsers;
+	private String generateRoles;
 
 	@Autowired
 	public DataGeneratorService(JdbcTemplate jdbcTemplate) {
@@ -38,6 +40,8 @@ public class DataGeneratorService {
 			prepareSqlQuery();
 
 			executeSqlQuery(createTables);
+			executeSqlQuery(generateUsers);
+			executeSqlQuery(generateRoles);
 			executeSqlQuery(generateGroups);
 			executeSqlQuery(generateStudents);
 			executeSqlQuery(generateStudentsCourses);
@@ -66,6 +70,8 @@ public class DataGeneratorService {
 		generateTeachers = DBUtil.readQueryFromFile(GENERATE_TEACHERS);
 		generateTeachersCourses = DBUtil.readQueryFromFile(GENERATE_TEACHERS_COURSES);
 		generateSchedule = DBUtil.readQueryFromFile(GENERATE_SCHEDULE);
+		generateUsers = DBUtil.readQueryFromFile(GENERATE_USERS);
+		generateRoles = DBUtil.readQueryFromFile(GENERATE_ROLES);
 	}
 
 	private void executeSqlQuery(String sql) {
