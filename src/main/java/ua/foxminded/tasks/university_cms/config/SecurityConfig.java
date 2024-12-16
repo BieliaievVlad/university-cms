@@ -31,18 +31,15 @@ public class SecurityConfig {
         	.userDetailsService(userService)
             .csrf().disable()
             .sessionManagement()
-            	.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+            	.sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
             	.and()
             .authorizeRequests()
             	.requestMatchers("/", "/login").permitAll()
             	.requestMatchers("/static/**", "/css/**", "/js/**", "/images/**", "/webjars/**").permitAll()
-                .requestMatchers("/users").hasRole("ADMIN")
-                .requestMatchers("/students", "/teachers", "/courses").hasAnyRole("ADMIN", "STAFF", "TEACHER", "STUDENT")
                 .anyRequest().authenticated();
 
         httpSecurity
             .formLogin()
-                .loginPage("/login")
                 .defaultSuccessUrl("/", true)
                 .failureUrl("/login?error=true")
                 .permitAll();

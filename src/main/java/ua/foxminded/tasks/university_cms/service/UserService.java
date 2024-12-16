@@ -2,6 +2,8 @@ package ua.foxminded.tasks.university_cms.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,6 +12,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import jakarta.persistence.EntityNotFoundException;
+import ua.foxminded.tasks.university_cms.entity.Role;
 import ua.foxminded.tasks.university_cms.entity.User;
 import ua.foxminded.tasks.university_cms.repository.UserRepository;
 

@@ -76,5 +76,16 @@ class UserServiceTest {
 
 		verify(repository, times(1)).delete(user);
 	}
+	
+	@Test
+	void loadUserByUsername_validUsername_CalledOnce() {
+		String username = "username";
+		User user = new User("username", "password");
+		when(repository.findByUsername(username)).thenReturn(user);
+		
+		service.loadUserByUsername(username);
+		
+		verify(repository, times(1)).findByUsername(username);
+	}
 
 }

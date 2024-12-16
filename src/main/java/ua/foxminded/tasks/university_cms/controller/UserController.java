@@ -2,9 +2,8 @@ package ua.foxminded.tasks.university_cms.controller;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -30,6 +29,7 @@ public class UserController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 	
+    @PreAuthorize("hasRole('ADMIN')")
 	@GetMapping("/users")
 	public String showUsers(Model model) {
 		
@@ -39,11 +39,13 @@ public class UserController {
 		return "users";
 	}
 	
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/addUser")
     public String showAddUserForm() {
         return "addUser";
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/add")
     public String addUser(@RequestParam String username, @RequestParam String password, @RequestParam String role) {
 
@@ -58,6 +60,7 @@ public class UserController {
         return "redirect:/users";
     }
     
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/delete/{id}")
     public String deleteUser(@PathVariable Long id) {
 
