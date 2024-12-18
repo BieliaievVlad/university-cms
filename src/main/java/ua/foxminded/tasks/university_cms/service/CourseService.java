@@ -13,20 +13,20 @@ import ua.foxminded.tasks.university_cms.repository.CourseRepository;
 @Service
 public class CourseService {
 
-	private final CourseRepository repository;
+	private final CourseRepository courseRepository;
 
 	@Autowired
-	public CourseService(CourseRepository repository) {
-		this.repository = repository;
+	public CourseService(CourseRepository courseRepository) {
+		this.courseRepository = courseRepository;
 	}
 
 	public List<Course> findAll() {
-		return repository.findAll();
+		return courseRepository.findAll();
 	}
 
 	public Course findById(Long searchId) {
 
-		Optional<Course> optCourse = repository.findById(searchId);
+		Optional<Course> optCourse = courseRepository.findById(searchId);
 
 		if (optCourse.isPresent()) {
 
@@ -43,16 +43,16 @@ public class CourseService {
 
 			throw new IllegalArgumentException("Course is not valid.");
 		}
-		repository.save(course);
+		courseRepository.save(course);
 	}
 
 	public void delete(Long courseId) {
 
-		Optional<Course> optCourse = repository.findById(courseId);
+		Optional<Course> optCourse = courseRepository.findById(courseId);
 
 		if (optCourse.isPresent()) {
 
-			repository.delete(optCourse.get());
+			courseRepository.delete(optCourse.get());
 
 		} else {
 			throw new EntityNotFoundException("Course is not found.");

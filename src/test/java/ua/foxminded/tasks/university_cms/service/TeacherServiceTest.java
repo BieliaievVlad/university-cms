@@ -78,5 +78,10 @@ class TeacherServiceTest {
 
 		verify(repository, times(1)).delete(teacher);
 	}
+	
+	@Test
+	void findByCourse_ValidValue_CalledOnce() {
+		fail("Not yet implemented");
+	}
 
 }

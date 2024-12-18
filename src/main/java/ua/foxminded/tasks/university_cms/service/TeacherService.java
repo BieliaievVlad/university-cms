@@ -7,26 +7,31 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import jakarta.persistence.EntityNotFoundException;
+import ua.foxminded.tasks.university_cms.entity.Course;
 import ua.foxminded.tasks.university_cms.entity.Teacher;
+import ua.foxminded.tasks.university_cms.entity.TeacherCourse;
+import ua.foxminded.tasks.university_cms.repository.TeacherCourseRepository;
 import ua.foxminded.tasks.university_cms.repository.TeacherRepository;
 
 @Service
 public class TeacherService {
 
-	private final TeacherRepository repository;
+	private final TeacherRepository teacherRepository;
+	private final TeacherCourseRepository teacherCourseRepository;
 
 	@Autowired
-	public TeacherService(TeacherRepository repository) {
-		this.repository = repository;
+	public TeacherService(TeacherRepository teacherRepository, TeacherCourseRepository teacherCourseRepository) {
+		this.teacherRepository = teacherRepository;
+		this.teacherCourseRepository = teacherCourseRepository;
 	}
 
 	public List<Teacher> findAll() {
-		return repository.findAll();
+		return teacherRepository.findAll();
 	}
 
 	public Teacher findById(Long searchId) {
 
-		Optional<Teacher> optTeacher = repository.findById(searchId);
+		Optional<Teacher> optTeacher = teacherRepository.findById(searchId);
 
 		if (optTeacher.isPresent()) {
 
@@ -43,20 +48,35 @@ public class TeacherService {
 			throw new IllegalArgumentException("Teacher is not valid.");
 		}
 
-		repository.save(teacher);
+		teacherRepository.save(teacher);
 	}
 
 	public void delete(Long teacherId) {
 
-		Optional<Teacher> optTeacher = repository.findById(teacherId);
+		Optional<Teacher> optTeacher = teacherRepository.findById(teacherId);
 
 		if (optTeacher.isPresent()) {
 
-			repository.delete(optTeacher.get());
+			teacherRepository.delete(optTeacher.get());
 
 		} else {
 			throw new EntityNotFoundException("Teacher is not found.");
 		}
+	}
+	
+	public Teacher findByCourse(Course course) {
+		
+		Long courseId = course.getId();
+		TeacherCourse teacherCourse = teacherCourseRepository.findByCourseId(courseId);
+		Long teacherId = teacherCourse.getTeacher().getId();
+		Optional<Teacher> optTeacher = teacherRepository.findById(teacherId);
+		
+		if(optTeacher.isPresent()) {
+			return optTeacher.get();
+			
+		} else {
+			throw new IllegalArgumentException("Teacher not found");
+		}		
 	}
 
 	private boolean isTeacherValid(Teacher teacher) {

@@ -44,5 +44,4 @@ public class TeacherCourseService {
 			throw new IllegalStateException("Teacher is not assigned to a course.");
 		}
 	}
-
 }

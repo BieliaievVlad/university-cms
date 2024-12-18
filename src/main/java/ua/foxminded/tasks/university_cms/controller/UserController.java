@@ -40,9 +40,9 @@ public class UserController {
 	}
 	
     @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/addUser")
+    @GetMapping("/add-user")
     public String showAddUserForm() {
-        return "addUser";
+        return "add-user";
     }
 
     @PreAuthorize("hasRole('ADMIN')")

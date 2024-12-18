@@ -8,5 +8,7 @@ import ua.foxminded.tasks.university_cms.entity.TeacherCourseId;
 
 @Repository
 public interface TeacherCourseRepository extends JpaRepository<TeacherCourse, TeacherCourseId> {
+	
+	TeacherCourse findByCourseId(Long courseId);
 
 }
