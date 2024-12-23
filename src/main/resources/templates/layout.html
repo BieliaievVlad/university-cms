@@ -19,7 +19,7 @@
 					<span class="navbar-toggler-icon"></span>
 				</button>
 				<div class="collapse navbar-collapse" id="navbarNav">
-					<ul class="navbar-nav">
+					<ul class="navbar-nav"  sec:authorize="isAuthenticated()">
 						<li class="nav-item"><a class="nav-link" href="/students">Students</a></li>
 						<li class="nav-item"><a class="nav-link" href="/teachers">Teachers</a></li>
 						<li class="nav-item"><a class="nav-link" href="/courses">Courses</a></li>

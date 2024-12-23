@@ -46,7 +46,7 @@ public class UserController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/add")
+    @PostMapping("/add-user")
     public String addUser(@RequestParam String username, @RequestParam String password, @RequestParam String role) {
 
         User newUser = new User();
@@ -61,7 +61,7 @@ public class UserController {
     }
     
     @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/delete/{id}")
+    @GetMapping("/delete-user/{id}")
     public String deleteUser(@PathVariable Long id) {
 
         userService.delete(id);

@@ -60,7 +60,7 @@ public class CourseService {
 	}
 
 	private boolean isCourseValid(Course course) {
-		return course != null && course.getId() != null && course.getName() != null;
+		return course != null && course.getName() != null;
 	}
 
 }

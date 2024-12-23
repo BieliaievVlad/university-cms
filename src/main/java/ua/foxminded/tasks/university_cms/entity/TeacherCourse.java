@@ -9,7 +9,6 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 @Entity
@@ -17,7 +16,6 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-@RequiredArgsConstructor
 public class TeacherCourse {
 
 	@EmbeddedId
@@ -34,5 +32,12 @@ public class TeacherCourse {
 	@JoinColumn(name = "course_id")
 	@NonNull
 	private Course course;
+	
+	public TeacherCourse(Teacher teacher, Course course) {
+	    this.teacher = teacher;
+	    this.course = course;
+	    this.id = new TeacherCourseId(teacher.getId(), course.getId());
+	}
 
 }
+

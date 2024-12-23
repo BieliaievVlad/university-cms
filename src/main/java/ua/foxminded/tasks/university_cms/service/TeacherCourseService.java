@@ -20,12 +20,15 @@ public class TeacherCourseService {
 	}
 
 	public void save(TeacherCourse teacherCourse) {
-
+		
 		TeacherCourseId id = new TeacherCourseId(teacherCourse.getTeacher().getId(), teacherCourse.getCourse().getId());
 		Optional<TeacherCourse> optional = repository.findById(id);
 
 		if (optional.isEmpty()) {
-			repository.save(teacherCourse);
+			
+			TeacherCourse newTeacherCourse= new TeacherCourse(teacherCourse.getTeacher(),
+															  teacherCourse.getCourse());
+			repository.save(newTeacherCourse);
 
 		} else {
 			throw new IllegalStateException("Teacher is already assigned to a course.");
@@ -38,10 +41,18 @@ public class TeacherCourseService {
 		Optional<TeacherCourse> optional = repository.findById(id);
 
 		if (optional.isPresent()) {
-			repository.delete(teacherCourse);
+			
+			TeacherCourse newTeacherCourse= new TeacherCourse(teacherCourse.getTeacher(),
+					  										  teacherCourse.getCourse());
+			repository.delete(newTeacherCourse);
 
 		} else {
 			throw new IllegalStateException("Teacher is not assigned to a course.");
 		}
+	}
+	
+	public TeacherCourse findByCourseId(Long courseId) {
+		
+		return repository.findByCourseId(courseId);
 	}
 }

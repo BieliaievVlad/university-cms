@@ -9,27 +9,32 @@ import jakarta.persistence.Table;
 import lombok.*;
 
 @Entity
-@Table(name = "students_courses", schema = "university")
+@Table(name = "groups_courses", schema = "university")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@RequiredArgsConstructor
-public class StudentCourse {
+public class GroupCourse {
 
 	@EmbeddedId
-	private StudentCourseId id;
+	private GroupCourseId id;
 
 	@ManyToOne
-	@MapsId("studentId")
-	@JoinColumn(name = "student_id")
+	@MapsId("groupId")
+	@JoinColumn(name = "group_id")
 	@NonNull
-	private Student student;
+	private Group group;
 
 	@ManyToOne
 	@MapsId("courseId")
 	@JoinColumn(name = "course_id")
 	@NonNull
 	private Course course;
+	
+	public GroupCourse(Group group, Course course) {
+		this.group = group;
+		this.course = course;
+		this.id = new GroupCourseId(group.getId(), course.getId());
+	}
 
 }

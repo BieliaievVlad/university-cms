@@ -28,7 +28,7 @@
 						<th>Course</th>
 						<th>Teacher</th>
 						<th>Groups</th>
-						<th sec:authorize="hasRole('ADMIN')">Actions</th>
+						<th sec:authorize="hasAnyRole('ADMIN', 'STAFF')">Actions</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -36,10 +36,20 @@
 						<tr>
 							<td th:text="${teacherCourse.course.id}"></td>
 							<td th:text="${teacherCourse.course.name}"></td>
-							<td th:text="${teacherCourse.teacher != null ? teacherCourse.teacher.firstName + ' ' + teacherCourse.teacher.lastName : 'N/A'}"></td>
-							<td th:text="some-text-for-groups"></td>
-							<td sec:authorize="hasRole('ADMIN')"><a th:href="@{/delete/{id}(id=${teacherCourse.course.id})}"
-								class="btn btn-danger btn-sm">Delete</a></td>
+							<td
+								th:text="${teacherCourse.teacher != null ? teacherCourse.teacher.firstName + ' ' + teacherCourse.teacher.lastName : 'N/A'}"></td>
+							<td>
+								<ul>
+									<th:block
+										th:each="group : ${courseGroupsMap[teacherCourse.course]}">
+										<li th:text="${group.name}"></li>
+									</th:block>
+								</ul>
+							</td>
+							<td sec:authorize="hasAnyRole('ADMIN', 'STAFF')">
+							<a th:href="@{/edit-course/{id}(id=${teacherCourse.course.id})}" class="btn btn-primary">Edit</a> 
+							<a sec:authorize="hasRole('ADMIN')" th:href="@{/delete-course/{id}(id=${teacherCourse.course.id})}" class="btn btn-danger btn-sm">Delete</a>
+							</td>
 						</tr>
 					</th:block>
 				</tbody>

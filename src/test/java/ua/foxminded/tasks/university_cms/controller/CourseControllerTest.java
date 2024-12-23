@@ -11,6 +11,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import ua.foxminded.tasks.university_cms.service.CourseService;
 import ua.foxminded.tasks.university_cms.service.DataGeneratorService;
+import ua.foxminded.tasks.university_cms.service.TeacherService;
 
 @WebMvcTest(CourseController.class)
 class CourseControllerTest {
@@ -22,7 +23,10 @@ class CourseControllerTest {
 	DataGeneratorService dataService;
 	
 	@MockBean
-	CourseService service;
+	CourseService courseService;
+	
+	@MockBean
+	TeacherService teacherService;
 
 	@Test
 	@WithMockUser(username = "admin", roles = "ADMIN")

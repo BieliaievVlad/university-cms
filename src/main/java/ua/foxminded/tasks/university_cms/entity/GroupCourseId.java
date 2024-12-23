@@ -8,14 +8,14 @@ import lombok.NoArgsConstructor;
 
 @Embeddable
 @NoArgsConstructor
-public class StudentCourseId implements Serializable {
+public class GroupCourseId implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	private Long studentId;
+	private Long groupId;
 	private Long courseId;
 
-	public StudentCourseId(Long studentId, Long courseId) {
-		this.studentId = studentId;
+	public GroupCourseId(Long groupId, Long courseId) {
+		this.groupId = groupId;
 		this.courseId = courseId;
 	}
 
@@ -23,14 +23,14 @@ public class StudentCourseId implements Serializable {
 	public boolean equals(Object o) {
 		if (this == o)
 			return true;
-		if (!(o instanceof StudentCourseId))
+		if (!(o instanceof GroupCourseId))
 			return false;
-		StudentCourseId that = (StudentCourseId) o;
-		return Objects.equals(studentId, that.studentId) && Objects.equals(courseId, that.courseId);
+		GroupCourseId that = (GroupCourseId) o;
+		return Objects.equals(groupId, that.groupId) && Objects.equals(courseId, that.courseId);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(studentId, courseId);
+		return Objects.hash(groupId, courseId);
 	}
 }

@@ -50,9 +50,9 @@ class UserControllerTest {
 	@Test
 	@WithMockUser(username = "admin", roles = "ADMIN")
 	void showAddUserForm_addUserPageRequest_returnsAddUserView() throws Exception {
-		mockMvc.perform(MockMvcRequestBuilders.get("/addUser"))
+		mockMvc.perform(MockMvcRequestBuilders.get("/add-user"))
 		   	   .andExpect(MockMvcResultMatchers.status().isOk())
-		   	   .andExpect(MockMvcResultMatchers.view().name("addUser"));
+		   	   .andExpect(MockMvcResultMatchers.view().name("add-user"));
 		
 	}
 	

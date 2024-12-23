@@ -80,7 +80,7 @@ class TeacherServiceTest {
 	}
 	
 	@Test
-	void findByCourse_ValidValue_CalledOnce() {
+	void findByCourse_ValidValue_ReturnsExpected() {
 		fail("Not yet implemented");
 	}
 

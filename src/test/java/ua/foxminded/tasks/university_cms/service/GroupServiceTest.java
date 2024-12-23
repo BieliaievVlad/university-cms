@@ -75,5 +75,10 @@ class GroupServiceTest {
 
 		verify(repository, times(1)).delete(group);
 	}
+	
+	@Test
+	void findByCourse_ValidValue_ReturnsExpected() {
+		fail("Not yet implemented");
+	}
 
 }
