@@ -142,7 +142,7 @@ public class CourseController {
 	
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/delete-course/{id}")
-    public String deleteUser(@PathVariable Long id) {
+    public String deleteCourse(@PathVariable Long id) {
 
     	TeacherCourse teacherCourse = teacherCourseService.findByCourseId(id);
     	List<GroupCourse> groupCourses = groupCourseService.findByCourseId(id);

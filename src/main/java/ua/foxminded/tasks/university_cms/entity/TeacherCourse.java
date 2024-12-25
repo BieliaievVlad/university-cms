@@ -1,5 +1,7 @@
 package ua.foxminded.tasks.university_cms.entity;
 
+import java.util.Objects;
+
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
@@ -37,6 +39,19 @@ public class TeacherCourse {
 	    this.teacher = teacher;
 	    this.course = course;
 	    this.id = new TeacherCourseId(teacher.getId(), course.getId());
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+	    if (this == o) return true;
+	    if (o == null || getClass() != o.getClass()) return false;
+	    TeacherCourse that = (TeacherCourse) o;
+	    return Objects.equals(teacher, that.teacher) && Objects.equals(course, that.course);
+	}
+
+	@Override
+	public int hashCode() {
+	    return Objects.hash(teacher, course);
 	}
 
 }

@@ -13,8 +13,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 
+import ua.foxminded.tasks.university_cms.entity.Course;
 import ua.foxminded.tasks.university_cms.entity.Teacher;
+import ua.foxminded.tasks.university_cms.entity.TeacherCourse;
 import ua.foxminded.tasks.university_cms.entity.User;
+import ua.foxminded.tasks.university_cms.repository.TeacherCourseRepository;
 import ua.foxminded.tasks.university_cms.repository.TeacherRepository;
 
 @SpringBootTest
@@ -22,7 +25,10 @@ import ua.foxminded.tasks.university_cms.repository.TeacherRepository;
 class TeacherServiceTest {
 
 	@MockBean
-	TeacherRepository repository;
+	TeacherRepository teacherRepository;
+	
+	@MockBean
+	TeacherCourseRepository teacherCourseRepository;
 
 	@Autowired
 	TeacherService service;
@@ -33,12 +39,12 @@ class TeacherServiceTest {
 		User user = new User("username", "password");
 		Teacher teacher = new Teacher(1L, "FirstName", "LastName", user);
 		List<Teacher> expectedTeacher = Arrays.asList(teacher);
-		when(repository.findAll()).thenReturn(expectedTeacher);
+		when(teacherRepository.findAll()).thenReturn(expectedTeacher);
 
 		List<Teacher> actualTeacher = service.findAll();
 
 		assertEquals(expectedTeacher, actualTeacher);
-		verify(repository, times(1)).findAll();
+		verify(teacherRepository, times(1)).findAll();
 	}
 
 	@Test
@@ -47,12 +53,12 @@ class TeacherServiceTest {
 		Long searchId = 1L;
 		Teacher expected = new Teacher("FirstName", "LastName");
 		Optional<Teacher> optTeacher = Optional.of(expected);
-		when(repository.findById(searchId)).thenReturn(optTeacher);
+		when(teacherRepository.findById(searchId)).thenReturn(optTeacher);
 
 		Teacher actual = service.findById(searchId);
 
 		assertEquals(expected, actual);
-		verify(repository, times(1)).findById(searchId);
+		verify(teacherRepository, times(1)).findById(searchId);
 
 	}
 
@@ -60,28 +66,40 @@ class TeacherServiceTest {
 	void save_ValidValue_CalledOnce() {
 		User user = new User("username", "password");
 		Teacher teacher = new Teacher(1L, "FirstName", "LastName", user);
-		when(repository.save(teacher)).thenReturn(teacher);
+		when(teacherRepository.save(teacher)).thenReturn(teacher);
 
 		service.save(teacher);
 
-		verify(repository, times(1)).save(teacher);
+		verify(teacherRepository, times(1)).save(teacher);
 	}
 
 	@Test
 	void delete_ValidValue_CalledOnce() {
 		Long id = 1L;
 		Teacher teacher = new Teacher("FirstName", "LastName");
-		when(repository.findById(id)).thenReturn(Optional.of(teacher));
-		doNothing().when(repository).delete(teacher);
+		when(teacherRepository.findById(id)).thenReturn(Optional.of(teacher));
+		doNothing().when(teacherRepository).delete(teacher);
 
 		service.delete(id);
 
-		verify(repository, times(1)).delete(teacher);
+		verify(teacherRepository, times(1)).delete(teacher);
 	}
 	
 	@Test
 	void findByCourse_ValidValue_ReturnsExpected() {
-		fail("Not yet implemented");
+		
+		Course course = new Course(1L, "Course_Name");
+		Teacher teacher = new Teacher(1L, "FirstName", "LastName");
+		TeacherCourse teacherCourse = new TeacherCourse(teacher, course);
+		when(teacherCourseRepository.findByCourseId(course.getId())).thenReturn(teacherCourse);
+		when(teacherRepository.findById(teacher.getId())).thenReturn(Optional.of(teacher));
+		
+		Teacher actual = service.findByCourse(course);
+		
+		verify(teacherRepository, times(1)).findById(teacher.getId());
+		verify(teacherCourseRepository, times(1)).findByCourseId(course.getId());
+		assertEquals(teacher, actual);
+		
 	}
 
 }
