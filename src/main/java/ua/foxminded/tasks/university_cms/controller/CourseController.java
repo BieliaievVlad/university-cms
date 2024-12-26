@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -98,9 +99,11 @@ public class CourseController {
     }
 	
 	@PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
-	@GetMapping("/edit-course/{id}")
-    public String editCourse(@PathVariable Long id, Model model) {
+	@GetMapping("/course/{id}")
+    public String showCourseForm(@PathVariable Long id, Model model) {
 
+	    Map<Course, List<Group>> courseGroupsMap = new HashMap<>();
+		List<Course> courses = courseService.findAll();
 		List<Teacher> teachers = teacherService.findAll();
 		List<Group> groups = groupService.findAll();
 		GroupCourse groupCourse = new GroupCourse();
@@ -110,33 +113,101 @@ public class CourseController {
         }
 		Teacher teacher = teacherService.findByCourse(course);
 		TeacherCourse teacherCourse = new TeacherCourse(teacher, course);
+		
+	    for (Course c : courses) {
+	        List<Group> g = groupService.findByCourse(c);
+	        courseGroupsMap.put(c, g);
+	    }
         
         model.addAttribute("teachers", teachers);
         model.addAttribute("groups", groups);
         model.addAttribute("groupCourse", groupCourse);
         model.addAttribute("teacherCourse", teacherCourse);
-        return "edit-course";
+	    model.addAttribute("courseGroupsMap", courseGroupsMap);
+        return "course";
     }
 	
 	@PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
-    @PostMapping("/update-course")
-    public String updateCourse(@ModelAttribute TeacherCourse teacherCourse, 
-    						   @ModelAttribute GroupCourse groupCourse,
-    						   Model model) {
+	@GetMapping("/edit-teacher/{id}")
+	public String showEditTeacherForm(@PathVariable Long id, Model model) {
 		
-		GroupCourse newGroupCourse = new GroupCourse(groupCourse.getGroup(), teacherCourse.getCourse());
-        courseService.save(teacherCourse.getCourse());
+		List<Teacher> teachers = teacherService.findAll();
+		TeacherCourse teacherCourse = teacherCourseService.findByCourseId(id);
+		
+		model.addAttribute("teachers", teachers);
+		model.addAttribute("teacherCourse", teacherCourse);
+			
+		return "edit-teacher";
+	}
+	
+	@PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    @PostMapping("/update-teacher")
+    public String updateTeacher(@ModelAttribute TeacherCourse teacherCourse) {
+		
+		Long id = teacherCourse.getCourse().getId();
+		Course course = courseService.findById(id);
+		TeacherCourse oldTeacherCourse = teacherCourseService.findByCourseId(id);		
+        TeacherCourse newTeacherCourse = new TeacherCourse();
+        newTeacherCourse.setTeacher(teacherCourse.getTeacher());
+        newTeacherCourse.setCourse(course);
         
-        try {
-        	
-        	groupCourseService.save(newGroupCourse);
-        	
-        } catch (IllegalStateException e) {
-        	
-            model.addAttribute("error", "Group is already enrolled in this course.");
-            return "edit-course";
-        }
+        teacherCourseService.delete(oldTeacherCourse);
+        teacherCourseService.save(newTeacherCourse);
         
+        return "redirect:/courses";
+    }
+	
+	@PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+	@GetMapping("/edit-groups/{id}")
+	public String showEditGroupsForm(@PathVariable Long id, Model model) {
+		
+		List<Group> allGroups = groupService.findAll();
+	    Map<Long, List<Group>> courseGroupsMap = new HashMap<>();
+        Course course = courseService.findById(id);
+        Group group = new Group();
+        List<Group> groups = groupService.findByCourse(course);
+
+        courseGroupsMap.put(id, groups);
+        
+        List<Group> filteredGroups = allGroups.stream()
+                .filter(g -> !groups.contains(g))
+                .collect(Collectors.toList());
+        
+        model.addAttribute("courseGroupsMap", courseGroupsMap);
+        model.addAttribute("filteredGroups", filteredGroups);
+        model.addAttribute("course", course);
+        model.addAttribute("group", group);
+        
+		return "edit-groups";
+	}
+	
+	@PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    @PostMapping("/update-groups")
+    public String updateGroups(@RequestParam("group") Long groupId, Long courseId) {
+		
+		Group group = groupService.findById(groupId);
+		Course course = courseService.findById(courseId);
+		GroupCourse newGroupCourse = new GroupCourse();
+
+		newGroupCourse.setGroup(group);
+		newGroupCourse.setCourse(course);
+		
+		groupCourseService.save(newGroupCourse);
+        
+        return "redirect:/courses";
+    }
+	
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    @GetMapping("/delete-group/{groupId}")
+    public String deleteGroup(@PathVariable Long groupId, @RequestParam Long courseId) {
+
+    	Group group = groupService.findById(groupId);
+    	Course course = courseService.findById(courseId);
+    	
+    	GroupCourse groupCourse = new GroupCourse(group, course);
+    	
+    	groupCourseService.delete(groupCourse);
+
         return "redirect:/courses";
     }
 	

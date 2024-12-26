@@ -47,7 +47,7 @@
 								</ul>
 							</td>
 							<td sec:authorize="hasAnyRole('ADMIN', 'STAFF')">
-							<a th:href="@{/edit-course/{id}(id=${teacherCourse.course.id})}" class="btn btn-primary">Edit</a> 
+							<a th:href="@{/course/{id}(id=${teacherCourse.course.id})}" class="btn btn-primary">Details</a> 
 							<a sec:authorize="hasRole('ADMIN')" th:href="@{/delete-course/{id}(id=${teacherCourse.course.id})}" class="btn btn-danger btn-sm">Delete</a>
 							</td>
 						</tr>

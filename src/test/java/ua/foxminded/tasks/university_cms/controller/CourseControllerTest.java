@@ -1,12 +1,16 @@
 package ua.foxminded.tasks.university_cms.controller;
 
+import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -103,60 +107,126 @@ class CourseControllerTest {
 	
 	@Test
 	@WithMockUser(username = "admin", roles = "ADMIN")
-	void editCourse_ValidValue_CalledMethodsAndAndSendAttributes() throws Exception {
+	void showCourseForm_coursePageRequest_returnsCourseView() throws Exception {
+
+		Long id = 10L;
+		Course course = new Course();
+		Teacher teacher = new Teacher();
+		Group group = new Group();
+		when(courseService.findById(id)).thenReturn(course);
+		when(teacherService.findByCourse(course)).thenReturn(teacher);
+		when(groupService.findByCourse(course)).thenReturn(List.of(group));
 		
-    	Long id = 1L;
-    	Teacher teacher = new Teacher("First_name", "Last_Name");
-    	List<Teacher> teachers = List.of(teacher);
-    	Group group = new Group(1L,"Group_Name", 10L);
-    	List<Group> groups = List.of(group);
-    	Course course = new Course(1L, "Course_name");
-    	GroupCourse groupCourse = new GroupCourse();
-    	TeacherCourse teacherCourse = new TeacherCourse(teacher, course);
-    	
-    	when(teacherService.findAll()).thenReturn(teachers);
-    	when(groupService.findAll()).thenReturn(groups);
-    	when(courseService.findById(id)).thenReturn(course);
-    	when(teacherService.findByCourse(course)).thenReturn(teacher);
-
-        mockMvc.perform(MockMvcRequestBuilders.get("/edit-course/{id}", id)
-                .with(SecurityMockMvcRequestPostProcessors.csrf()))
-            .andExpect(MockMvcResultMatchers.status().isOk()) 
-            .andExpect(MockMvcResultMatchers.view().name("edit-course")) 
-            .andExpect(MockMvcResultMatchers.model().attribute("teachers", teachers))
-            .andExpect(MockMvcResultMatchers.model().attribute("groups", groups))
-            .andExpect(MockMvcResultMatchers.model().attribute("groupCourse", groupCourse))
-            .andExpect(MockMvcResultMatchers.model().attribute("teacherCourse", teacherCourse));
-
-        verify(teacherService, times(1)).findAll();
-        verify(groupService, times(1)).findAll();
-        verify(courseService, times(1)).findById(id);
-        verify(teacherService, times(1)).findByCourse(course);
+		mockMvc.perform(MockMvcRequestBuilders.get("/course/{id}", id))
+	   	   .andExpect(MockMvcResultMatchers.status().isOk())
+	   	   .andExpect(MockMvcResultMatchers.view().name("course"));
 	}
 	
 	@Test
 	@WithMockUser(username = "admin", roles = "ADMIN")
-	void updateCourse_ValidValue_CalledMethodsAndRedirect() throws Exception {
-
-		Teacher teacher = new Teacher("First_name", "Last_Name");
-		Group group = new Group(1L,"Group_Name", 10L);
-		Course course = new Course(1L, "Course_name");
-		GroupCourse groupCourse = new GroupCourse(group, course);
+	void showEditTeacherForm_EditTeacherPageRequest_ShowEditTeacherView() throws Exception {
+		
+		Long id = 10L;
+		Teacher teacher = new Teacher();
+		Course course = new Course();
 		TeacherCourse teacherCourse = new TeacherCourse(teacher, course);
 		
-		doNothing().when(courseService).save(any(Course.class));
-        doNothing().when(groupCourseService).save(any(GroupCourse.class));
-        
-        mockMvc.perform(MockMvcRequestBuilders.post("/update-course")
-        		.with(SecurityMockMvcRequestPostProcessors.csrf())
-                .flashAttr("teacherCourse", teacherCourse)
-                .flashAttr("groupCourse", groupCourse))
-                .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
-        		.andExpect(MockMvcResultMatchers.header().string("Location", "/courses"));
+		when(teacherService.findAll()).thenReturn(List.of(teacher));
+		when(teacherCourseService.findByCourseId(id)).thenReturn(teacherCourse);
+		
+		mockMvc.perform(MockMvcRequestBuilders.get("/edit-teacher/{id}", id))
+	   	   .andExpect(MockMvcResultMatchers.status().isOk())
+	   	   .andExpect(MockMvcResultMatchers.view().name("edit-teacher"));
+	
+	}
+	
+	@Test
+	@WithMockUser(username = "admin", roles = "ADMIN")
+	void updateTeacher_ValidInput_CalledMethodsAndRedirectsToCoursesPage() throws Exception {
 
-        verify(courseService, times(1)).save(any(Course.class)); 
-        verify(groupCourseService, times(1)).save(any(GroupCourse.class));
+		Long id = 1L;
+		Teacher teacher = new Teacher(1L, "First_Name", "Last_Name");
+		Course course = new Course(1L, "Course_Name");
+		TeacherCourse teacherCourse = new TeacherCourse();
+	    teacherCourse.setTeacher(teacher);
+	    teacherCourse.setCourse(course);
+
+		when(courseService.findById(id)).thenReturn(course);
+		when(teacherCourseService.findByCourseId(id)).thenReturn(teacherCourse);
+		doNothing().when(teacherCourseService).delete(any(TeacherCourse.class));
+		doNothing().when(teacherCourseService).save(any(TeacherCourse.class));
+		
+    	mockMvc.perform(MockMvcRequestBuilders.post("/update-teacher")
+    			.with(SecurityMockMvcRequestPostProcessors.csrf())
+    			.flashAttr("teacherCourse", teacherCourse))
+ 	   			.andExpect(MockMvcResultMatchers.status().is3xxRedirection())
+ 	   			.andExpect(MockMvcResultMatchers.header().string("Location", "/courses"));
     	
+        verify(teacherCourseService, times(1)).delete(any(TeacherCourse.class)); 
+        verify(teacherCourseService, times(1)).save(any(TeacherCourse.class));
+
+	}
+	
+	@Test
+	@WithMockUser(username = "admin", roles = "ADMIN")
+	void showEditGroupsForm_EditGroupsPageRequest_ShowEditGroupsView() throws Exception {
+		
+		Long id = 10L;
+		Group group = new Group();
+		Course course = new Course(id, "Course_Name");
+		Map<Long, List<Group>> courseGroupsMap = new HashMap<>();
+		courseGroupsMap.put(id, List.of(group));
+		
+		when(groupService.findAll()).thenReturn(List.of(group));
+		when(courseService.findById(id)).thenReturn(course);
+		when(groupService.findByCourse(course)).thenReturn(List.of(group));
+		
+		mockMvc.perform(MockMvcRequestBuilders.get("/edit-groups/{id}", id))
+	   	   .andExpect(MockMvcResultMatchers.status().isOk())
+	   	   .andExpect(MockMvcResultMatchers.view().name("edit-groups"));
+	}
+	
+	@Test
+	@WithMockUser(username = "admin", roles = "ADMIN")
+	void updateGroups_ValidInput_CalledMethodsAndRedirectsToCoursesPage() throws Exception {
+		
+		Long groupId = 1L;
+		Long courseId = 1L;
+		Group group = new Group(groupId, "Group_Name", 10L);
+		Course course = new Course(courseId, "Course_Name");
+		
+		when(groupService.findById(groupId)).thenReturn(group);
+		when(courseService.findById(courseId)).thenReturn(course);
+		doNothing().when(groupCourseService).save(any(GroupCourse.class));
+		
+    	mockMvc.perform(MockMvcRequestBuilders.post("/update-groups")
+    			.with(SecurityMockMvcRequestPostProcessors.csrf())
+                .param("group", String.valueOf(groupId))
+                .param("courseId", String.valueOf(courseId)))
+ 	   			.andExpect(MockMvcResultMatchers.status().is3xxRedirection())
+ 	   			.andExpect(MockMvcResultMatchers.header().string("Location", "/courses"));
+    	
+        verify(groupCourseService, times(1)).save(any(GroupCourse.class));
+	}
+	
+	@Test
+	@WithMockUser(username = "admin", roles = "ADMIN")
+	void deleteGroup() throws Exception {
+		
+		Long groupId = 1L;
+		Long courseId = 2L;
+		Group group = new Group(groupId, "Group_Name", 10L);
+		Course course = new Course(courseId, "Course_Name");
+		
+		when(groupService.findById(groupId)).thenReturn(group);
+		when(courseService.findById(courseId)).thenReturn(course);
+		doNothing().when(groupCourseService).delete(any(GroupCourse.class));
+		
+		mockMvc.perform(MockMvcRequestBuilders.get("/delete-group/{groupId}", groupId)
+					.with(SecurityMockMvcRequestPostProcessors.csrf())
+					.param("courseId", String.valueOf(courseId)))
+	 	   			.andExpect(MockMvcResultMatchers.status().is3xxRedirection())
+	 	   			.andExpect(MockMvcResultMatchers.header().string("Location", "/courses"));
 	}
 	
 	@Test
