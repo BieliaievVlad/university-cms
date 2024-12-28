@@ -48,24 +48,34 @@ public class CourseController {
 	@PreAuthorize("hasAnyRole('ADMIN', 'STAFF', 'TEACHER', 'STUDENT')")
 	@GetMapping("/courses")
 	public String showCourses(Model model) {
-		
+
 		List<Course> courses = courseService.findAll();
 		List<TeacherCourse> teacherCourses = new ArrayList<>();
-		
+
 		for (Course course : courses) {
 			Teacher teacher = teacherService.findByCourse(course);
-			TeacherCourse teacherCourse = new TeacherCourse(teacher, course);
-			teacherCourses.add(teacherCourse);
+
+			if (teacher.getId() != 0L) {
+
+				TeacherCourse teacherCourse = new TeacherCourse(teacher, course);
+				teacherCourses.add(teacherCourse);
+			} else {
+
+				Teacher dummyTeacher = new Teacher(0L, "dummy", "dummy");
+				TeacherCourse teacherCourse = new TeacherCourse(dummyTeacher, course);
+				teacherCourses.add(teacherCourse);
+			}
+
 		}
 
-	    Map<Course, List<Group>> courseGroupsMap = new HashMap<>();
-	    for (Course course : courses) {
-	        List<Group> groups = groupService.findByCourse(course);
-	        courseGroupsMap.put(course, groups);
-	    }
-		
+		Map<Course, List<Group>> courseGroupsMap = new HashMap<>();
+		for (Course course : courses) {
+			List<Group> groups = groupService.findByCourse(course);
+			courseGroupsMap.put(course, groups);
+		}
+
 		model.addAttribute("teacherCourses", teacherCourses);
-	    model.addAttribute("courseGroupsMap", courseGroupsMap);
+		model.addAttribute("courseGroupsMap", courseGroupsMap);
 		return "courses";
 	}
 

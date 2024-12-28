@@ -14,3 +14,7 @@ DROP CONSTRAINT IF EXISTS teachers_courses_pkey;
 
 ALTER TABLE university.teachers_courses
 ADD CONSTRAINT teachers_courses_pkey PRIMARY KEY (teacher_id, course_id);
+
+INSERT INTO university.teachers (id, first_name, last_name) 
+VALUES 
+(0, 'dummy', 'dummy');

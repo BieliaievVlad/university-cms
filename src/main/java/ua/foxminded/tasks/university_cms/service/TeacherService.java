@@ -3,6 +3,8 @@ package ua.foxminded.tasks.university_cms.service;
 import java.util.List;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +20,7 @@ public class TeacherService {
 
 	private final TeacherRepository teacherRepository;
 	private final TeacherCourseRepository teacherCourseRepository;
+	Logger logger = LoggerFactory.getLogger(TeacherService.class);
 
 	@Autowired
 	public TeacherService(TeacherRepository teacherRepository, TeacherCourseRepository teacherCourseRepository) {
@@ -68,15 +71,25 @@ public class TeacherService {
 		
 		Long courseId = course.getId();
 		TeacherCourse teacherCourse = teacherCourseRepository.findByCourseId(courseId);
-		Long teacherId = teacherCourse.getTeacher().getId();
-		Optional<Teacher> optTeacher = teacherRepository.findById(teacherId);
 		
-		if(optTeacher.isPresent()) {
-			return optTeacher.get();
+		if (teacherCourse != null && teacherCourse.getTeacher() != null) {
 			
+			Long teacherId = teacherCourse.getTeacher().getId();
+			Optional<Teacher> optTeacher = teacherRepository.findById(teacherId);
+			
+			if(optTeacher.isPresent()) {
+				return optTeacher.get();
+				
+			} else {
+				throw new IllegalArgumentException("Teacher not found.");
+			}
 		} else {
-			throw new IllegalArgumentException("Teacher not found");
-		}		
+			logger.error("Teacher is not assigned to a course.");
+			Teacher dummyTeacher = new Teacher(0L, "dummy", "dummy");
+			teacherCourseRepository.save(new TeacherCourse(dummyTeacher, course));
+			return dummyTeacher;
+			
+		}	
 	}
 
 	private boolean isTeacherValid(Teacher teacher) {

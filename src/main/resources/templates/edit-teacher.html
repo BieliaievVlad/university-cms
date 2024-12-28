@@ -22,7 +22,8 @@
     	<div class="mb-3">
             <label for="teacher" class="form-label">Teacher</label>
             <select th:field="*{teacherCourse.teacher}" class="form-control" id="teacher">
-                <option th:each="teacher : ${teachers}" th:value="${teacher.id}" th:text="${teacher.firstName + ' ' + teacher.lastName}"></option>
+                <option th:each="teacher : ${teachers}" th:value="${teacher.id}" 
+                th:text="${teacher.id == 0 ? 'N/A' : teacher.firstName + ' ' + teacher.lastName}"></option>
             </select>
         </div>
         <input type="hidden" th:field="*{teacherCourse.course.id}" th:value="${teacherCourse.course.id}" />

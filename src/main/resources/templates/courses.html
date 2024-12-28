@@ -37,7 +37,7 @@
 							<td th:text="${teacherCourse.course.id}"></td>
 							<td th:text="${teacherCourse.course.name}"></td>
 							<td
-								th:text="${teacherCourse.teacher != null ? teacherCourse.teacher.firstName + ' ' + teacherCourse.teacher.lastName : 'N/A'}"></td>
+								th:text="${teacherCourse.teacher.id != 0 ? teacherCourse.teacher.firstName + ' ' + teacherCourse.teacher.lastName : 'N/A'}"></td>
 							<td>
 								<ul>
 									<th:block
