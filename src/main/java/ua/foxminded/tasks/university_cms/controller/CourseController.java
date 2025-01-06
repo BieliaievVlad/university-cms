@@ -1,11 +1,6 @@
 package ua.foxminded.tasks.university_cms.controller;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -16,14 +11,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import ua.foxminded.tasks.university_cms.entity.Course;
-import ua.foxminded.tasks.university_cms.entity.Group;
-import ua.foxminded.tasks.university_cms.entity.GroupCourse;
 import ua.foxminded.tasks.university_cms.entity.Teacher;
 import ua.foxminded.tasks.university_cms.entity.TeacherCourse;
+import ua.foxminded.tasks.university_cms.form.CourseFormData;
+import ua.foxminded.tasks.university_cms.form.CoursesData;
+import ua.foxminded.tasks.university_cms.form.EditGroupsFormData;
 import ua.foxminded.tasks.university_cms.service.CourseService;
-import ua.foxminded.tasks.university_cms.service.GroupCourseService;
-import ua.foxminded.tasks.university_cms.service.GroupService;
 import ua.foxminded.tasks.university_cms.service.TeacherCourseService;
 import ua.foxminded.tasks.university_cms.service.TeacherService;
 
@@ -37,45 +30,16 @@ public class CourseController {
 	TeacherService teacherService;
 	
 	@Autowired
-	GroupService groupService;
-	
-	@Autowired
 	TeacherCourseService teacherCourseService;
-	
-	@Autowired
-	GroupCourseService groupCourseService;
 		
 	@PreAuthorize("hasAnyRole('ADMIN', 'STAFF', 'TEACHER', 'STUDENT')")
 	@GetMapping("/courses")
 	public String showCourses(Model model) {
 
-		List<Course> courses = courseService.findAll();
-		List<TeacherCourse> teacherCourses = new ArrayList<>();
-
-		for (Course course : courses) {
-			Teacher teacher = teacherService.findByCourse(course);
-
-			if (teacher.getId() != 0L) {
-
-				TeacherCourse teacherCourse = new TeacherCourse(teacher, course);
-				teacherCourses.add(teacherCourse);
-			} else {
-
-				Teacher dummyTeacher = new Teacher(0L, "dummy", "dummy");
-				TeacherCourse teacherCourse = new TeacherCourse(dummyTeacher, course);
-				teacherCourses.add(teacherCourse);
-			}
-
-		}
-
-		Map<Course, List<Group>> courseGroupsMap = new HashMap<>();
-		for (Course course : courses) {
-			List<Group> groups = groupService.findByCourse(course);
-			courseGroupsMap.put(course, groups);
-		}
-
-		model.addAttribute("teacherCourses", teacherCourses);
-		model.addAttribute("courseGroupsMap", courseGroupsMap);
+		CoursesData data = courseService.prepareCoursesData();
+		
+		model.addAttribute("teacherCourses", data.getTeacherCourses());
+		model.addAttribute("courseGroupsMap", data.getCourseGroupsMap());
 		return "courses";
 	}
 
@@ -89,21 +53,7 @@ public class CourseController {
     @PostMapping("/add-course")
     public String addCourse(@RequestParam String courseName, @RequestParam Long teacherId) {
     	
-    	Course newCourse = new Course();
-    	Course course = new Course();
-    	Teacher teacher = new Teacher();
-    	TeacherCourse newTeacherCourse = new TeacherCourse();
-    	
-    	newCourse.setName(courseName);    	
-    	courseService.save(newCourse);
-    	
-    	teacher = teacherService.findById(teacherId);
-    	course = courseService.findById(newCourse.getId());
-    	    	
-    	newTeacherCourse.setTeacher(teacher);
-    	newTeacherCourse.setCourse(course);
-    	
-    	teacherCourseService.save(newTeacherCourse);
+    	courseService.saveCourse(courseName, teacherId);
     	
     	return "redirect:/courses";
     }
@@ -112,28 +62,13 @@ public class CourseController {
 	@GetMapping("/course/{id}")
     public String showCourseForm(@PathVariable Long id, Model model) {
 
-	    Map<Course, List<Group>> courseGroupsMap = new HashMap<>();
-		List<Course> courses = courseService.findAll();
-		List<Teacher> teachers = teacherService.findAll();
-		List<Group> groups = groupService.findAll();
-		GroupCourse groupCourse = new GroupCourse();
-        Course course = courseService.findById(id);
-        if (course == null) {
-            return "redirect:/courses";
-        }
-		Teacher teacher = teacherService.findByCourse(course);
-		TeacherCourse teacherCourse = new TeacherCourse(teacher, course);
-		
-	    for (Course c : courses) {
-	        List<Group> g = groupService.findByCourse(c);
-	        courseGroupsMap.put(c, g);
-	    }
+		CourseFormData data = courseService.prepareCourseFormData(id);
         
-        model.addAttribute("teachers", teachers);
-        model.addAttribute("groups", groups);
-        model.addAttribute("groupCourse", groupCourse);
-        model.addAttribute("teacherCourse", teacherCourse);
-	    model.addAttribute("courseGroupsMap", courseGroupsMap);
+        model.addAttribute("teachers", data.getTeachers());
+        model.addAttribute("groups", data.getGroups());
+        model.addAttribute("groupCourse", data.getGroupCourse());
+        model.addAttribute("teacherCourse", data.getTeacherCourse());
+	    model.addAttribute("courseGroupsMap", data.getCourseGroupsMap());
         return "course";
     }
 	
@@ -153,16 +88,8 @@ public class CourseController {
 	@PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     @PostMapping("/update-teacher")
     public String updateTeacher(@ModelAttribute TeacherCourse teacherCourse) {
-		
-		Long id = teacherCourse.getCourse().getId();
-		Course course = courseService.findById(id);
-		TeacherCourse oldTeacherCourse = teacherCourseService.findByCourseId(id);		
-        TeacherCourse newTeacherCourse = new TeacherCourse();
-        newTeacherCourse.setTeacher(teacherCourse.getTeacher());
-        newTeacherCourse.setCourse(course);
-        
-        teacherCourseService.delete(oldTeacherCourse);
-        teacherCourseService.save(newTeacherCourse);
+			
+		courseService.updateTeacherCourse(teacherCourse);
         
         return "redirect:/courses";
     }
@@ -171,22 +98,12 @@ public class CourseController {
 	@GetMapping("/edit-groups/{id}")
 	public String showEditGroupsForm(@PathVariable Long id, Model model) {
 		
-		List<Group> allGroups = groupService.findAll();
-	    Map<Long, List<Group>> courseGroupsMap = new HashMap<>();
-        Course course = courseService.findById(id);
-        Group group = new Group();
-        List<Group> groups = groupService.findByCourse(course);
-
-        courseGroupsMap.put(id, groups);
+		EditGroupsFormData data = courseService.prepareEditGroupsFormData(id);
         
-        List<Group> filteredGroups = allGroups.stream()
-                .filter(g -> !groups.contains(g))
-                .collect(Collectors.toList());
-        
-        model.addAttribute("courseGroupsMap", courseGroupsMap);
-        model.addAttribute("filteredGroups", filteredGroups);
-        model.addAttribute("course", course);
-        model.addAttribute("group", group);
+        model.addAttribute("courseGroupsMap", data.getCourseGroupsMap());
+        model.addAttribute("filteredGroups", data.getFilteredGroups());
+        model.addAttribute("course", data.getCourse());
+        model.addAttribute("group", data.getGroup());
         
 		return "edit-groups";
 	}
@@ -195,14 +112,7 @@ public class CourseController {
     @PostMapping("/update-groups")
     public String updateGroups(@RequestParam("group") Long groupId, Long courseId) {
 		
-		Group group = groupService.findById(groupId);
-		Course course = courseService.findById(courseId);
-		GroupCourse newGroupCourse = new GroupCourse();
-
-		newGroupCourse.setGroup(group);
-		newGroupCourse.setCourse(course);
-		
-		groupCourseService.save(newGroupCourse);
+		courseService.updateGroups(groupId, courseId);
         
         return "redirect:/courses";
     }
@@ -210,13 +120,8 @@ public class CourseController {
     @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     @GetMapping("/delete-group/{groupId}")
     public String deleteGroup(@PathVariable Long groupId, @RequestParam Long courseId) {
-
-    	Group group = groupService.findById(groupId);
-    	Course course = courseService.findById(courseId);
     	
-    	GroupCourse groupCourse = new GroupCourse(group, course);
-    	
-    	groupCourseService.delete(groupCourse);
+    	courseService.deleteGroup(groupId, courseId);
 
         return "redirect:/courses";
     }
@@ -224,16 +129,8 @@ public class CourseController {
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/delete-course/{id}")
     public String deleteCourse(@PathVariable Long id) {
-
-    	TeacherCourse teacherCourse = teacherCourseService.findByCourseId(id);
-    	List<GroupCourse> groupCourses = groupCourseService.findByCourseId(id);
-    	
-    	for (GroupCourse groupCourse : groupCourses) {
-    		groupCourseService.delete(groupCourse);
-    	}
-    	
-    	teacherCourseService.delete(teacherCourse);
-        courseService.delete(id);
+   	
+    	courseService.deleteCourse(id);
 
         return "redirect:/courses";
     }

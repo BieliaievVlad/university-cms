@@ -77,7 +77,7 @@ public class TeacherService {
 			Long teacherId = teacherCourse.getTeacher().getId();
 			Optional<Teacher> optTeacher = teacherRepository.findById(teacherId);
 			
-			if(optTeacher.isPresent()) {
+			if (optTeacher.isPresent()) {
 				return optTeacher.get();
 				
 			} else {
