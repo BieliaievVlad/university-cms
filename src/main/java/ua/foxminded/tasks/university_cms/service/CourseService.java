@@ -87,29 +87,8 @@ public class CourseService {
 		CoursesData data = new CoursesData();
 		
 		List<Course> courses = courseRepository.findAll();
-		List<TeacherCourse> teacherCourses = new ArrayList<>();
-
-		for (Course course : courses) {
-			Teacher teacher = teacherService.findByCourse(course);
-
-			if (teacher.getId() != 0L) {
-
-				TeacherCourse teacherCourse = new TeacherCourse(teacher, course);
-				teacherCourses.add(teacherCourse);
-			} else {
-
-				Teacher dummyTeacher = new Teacher(0L, "dummy", "dummy");
-				TeacherCourse teacherCourse = new TeacherCourse(dummyTeacher, course);
-				teacherCourses.add(teacherCourse);
-			}
-
-		}
-
-		Map<Course, List<Group>> courseGroupsMap = new HashMap<>();
-		for (Course course : courses) {
-			List<Group> groups = groupService.findByCourse(course);
-			courseGroupsMap.put(course, groups);
-		}
+		List<TeacherCourse> teacherCourses = prepareTeacherCourseList(courses);
+		Map<Course, List<Group>> courseGroupsMap = prepareCourseGroupsMap(courses);
 		
 		data.setTeacherCourses(teacherCourses);
 		data.setCourseGroupsMap(courseGroupsMap);
@@ -144,7 +123,6 @@ public class CourseService {
 		List<Course> courses = courseRepository.findAll();
 		List<Teacher> teachers = teacherService.findAll();
 		List<Group> groups = groupService.findAll();
-		GroupCourse groupCourse = new GroupCourse();
         Course course = findById(id);
 
 		Teacher teacher = teacherService.findByCourse(course);
@@ -155,7 +133,6 @@ public class CourseService {
 	        courseGroupsMap.put(c, g);
 	    }
 
-	    data.setGroupCourse(groupCourse);
 	    data.setTeacherCourse(teacherCourse);
 	    data.setGroups(groups);
 	    data.setTeachers(teachers);
@@ -184,7 +161,6 @@ public class CourseService {
 		List<Group> allGroups = groupService.findAll();
 	    Map<Long, List<Group>> courseGroupsMap = new HashMap<>();
         Course course = findById(id);
-        Group group = new Group();
         List<Group> groups = groupService.findByCourse(course);
 
         courseGroupsMap.put(id, groups);
@@ -193,7 +169,6 @@ public class CourseService {
                 .filter(g -> !groups.contains(g))
                 .collect(Collectors.toList());
 		
-        data.setGroup(group);
         data.setCourse(course);
         data.setCourseGroupsMap(courseGroupsMap);
         data.setFilteredGroups(filteredGroups);
@@ -234,6 +209,36 @@ public class CourseService {
     	
     	teacherCourseService.delete(teacherCourse);
         delete(id);
+	}
+	
+	 List<TeacherCourse> prepareTeacherCourseList(List<Course> courses) {
+		
+		List<TeacherCourse> teacherCourses = new ArrayList<>();
+		for (Course course : courses) {
+			Teacher teacher = teacherService.findByCourse(course);
+
+			if (teacher.getId() != 0L) {
+
+				TeacherCourse teacherCourse = new TeacherCourse(teacher, course);
+				teacherCourses.add(teacherCourse);
+			} else {
+
+				Teacher dummyTeacher = new Teacher(0L, "dummy", "dummy");
+				TeacherCourse teacherCourse = new TeacherCourse(dummyTeacher, course);
+				teacherCourses.add(teacherCourse);
+			}
+		}		
+		return teacherCourses;
+	}
+	
+	Map<Course, List<Group>> prepareCourseGroupsMap(List<Course> courses) {
+		
+		Map<Course, List<Group>> courseGroupsMap = new HashMap<>();
+		for (Course course : courses) {
+			List<Group> groups = groupService.findByCourse(course);
+			courseGroupsMap.put(course, groups);
+		}
+		return courseGroupsMap;
 	}
 
 	private boolean isCourseValid(Course course) {

@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ua.foxminded.tasks.university_cms.entity.Course;
 import ua.foxminded.tasks.university_cms.entity.Group;
-import ua.foxminded.tasks.university_cms.entity.GroupCourse;
 import ua.foxminded.tasks.university_cms.entity.Teacher;
 import ua.foxminded.tasks.university_cms.entity.TeacherCourse;
 
@@ -19,8 +18,7 @@ import ua.foxminded.tasks.university_cms.entity.TeacherCourse;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CourseFormData {
-	
-	private GroupCourse groupCourse;
+
 	private TeacherCourse teacherCourse;
 	private List<Group> groups = Collections.emptyList();
 	private List<Teacher> teachers = Collections.emptyList();

@@ -66,7 +66,6 @@ public class CourseController {
         
         model.addAttribute("teachers", data.getTeachers());
         model.addAttribute("groups", data.getGroups());
-        model.addAttribute("groupCourse", data.getGroupCourse());
         model.addAttribute("teacherCourse", data.getTeacherCourse());
 	    model.addAttribute("courseGroupsMap", data.getCourseGroupsMap());
         return "course";
@@ -103,7 +102,6 @@ public class CourseController {
         model.addAttribute("courseGroupsMap", data.getCourseGroupsMap());
         model.addAttribute("filteredGroups", data.getFilteredGroups());
         model.addAttribute("course", data.getCourse());
-        model.addAttribute("group", data.getGroup());
         
 		return "edit-groups";
 	}

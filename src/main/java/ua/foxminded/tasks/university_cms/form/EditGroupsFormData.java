@@ -17,7 +17,6 @@ import ua.foxminded.tasks.university_cms.entity.Group;
 @AllArgsConstructor
 public class EditGroupsFormData {
 	
-	private Group group;
 	private Course course;
 	private Map<Long, List<Group>> courseGroupsMap = Collections.emptyMap();
 	private List<Group> filteredGroups = Collections.emptyList();

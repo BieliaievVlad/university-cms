@@ -18,7 +18,7 @@ import ua.foxminded.tasks.university_cms.entity.TeacherCourse;
 @AllArgsConstructor
 public class CoursesData {
 	
-	private List<TeacherCourse> teacherCourses = Collections.emptyList();;
+	private List<TeacherCourse> teacherCourses = Collections.emptyList();
 	private Map<Course, List<Group>> courseGroupsMap = Collections.emptyMap();
 
 }
