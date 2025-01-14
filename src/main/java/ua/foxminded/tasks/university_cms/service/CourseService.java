@@ -188,7 +188,7 @@ public class CourseService {
 		groupCourseService.save(newGroupCourse);
 	}
 	
-	public void deleteGroup(Long groupId, Long courseId) {
+	public void deleteGroupFromCourse(Long groupId, Long courseId) {
 		
     	Group group = groupService.findById(groupId);
     	Course course = findById(courseId);

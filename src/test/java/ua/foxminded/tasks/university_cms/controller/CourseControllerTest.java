@@ -192,7 +192,7 @@ class CourseControllerTest {
 		Long groupId = 1L;
 		Long courseId = 2L;
 
-		doNothing().when(courseService).deleteGroup(groupId, courseId);
+		doNothing().when(courseService).deleteGroupFromCourse(groupId, courseId);
 		
 		mockMvc.perform(MockMvcRequestBuilders.get("/delete-group/{groupId}", groupId)
 					.with(SecurityMockMvcRequestPostProcessors.csrf())

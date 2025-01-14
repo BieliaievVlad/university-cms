@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Group</title>
+<link rel="stylesheet"
+	href="/webjars/bootstrap/5.2.3/css/bootstrap.min.css">
+</head>
+<body>
+
+	<div th:replace="~{layout :: navbar}"></div>
+
+
+
+	<div class="container mt-4">
+		<h1 class="text-center">Group</h1>
+
+        <div class="mb-3">
+            <label for="groupName" class="form-label">Group Name</label>
+            <div class="mb-3">
+            	 <span th:text="${group.name}" style="font-size: 20px; font-weight: bold;"></span>
+            </div>          
+        </div>
+
+		<div class="mt-3" sec:authorize="hasAnyRole('ADMIN', 'STAFF')">
+			<a href="/add-student-to-group" class="btn btn-primary">Add</a>
+		</div>
+
+		<div class="mt-3">
+			<table class="table table-bordered">
+				<thead>
+					<tr>
+						<th sec:authorize="hasAnyRole('ADMIN', 'STAFF')">ID</th>
+						<th>Student</th>
+						<th sec:authorize="hasAnyRole('ADMIN', 'STAFF')">Actions</th>
+					</tr>
+				</thead>
+				<tbody>
+					<th:block th:each="student : ${students}">
+						<tr>
+							<td sec:authorize="hasAnyRole('ADMIN', 'STAFF')" th:text="${student.id}"></td>
+							<td
+								th:text="${student.firstName + ' ' + student.lastName}"></td>
+
+							<td sec:authorize="hasAnyRole('ADMIN', 'STAFF')">
+							<a th:href="@{/delete-student-from-group/{id}(id=${student.id})}" class="btn btn-danger btn-sm">Delete</a>
+							</td>
+						</tr>
+					</th:block>
+				</tbody>
+			</table>
+		</div>
+
+		<div class="mt-3">
+			<a href="/groups" class="btn btn-primary">Back</a>
+		</div>
+	</div>
+
+	<script src="/webjars/bootstrap/5.2.3/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

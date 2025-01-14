@@ -34,7 +34,7 @@ public class CourseController {
 		
 	@PreAuthorize("hasAnyRole('ADMIN', 'STAFF', 'TEACHER', 'STUDENT')")
 	@GetMapping("/courses")
-	public String showCourses(Model model) {
+	public String showCoursesForm(Model model) {
 
 		CoursesData data = courseService.prepareCoursesData();
 		
@@ -116,10 +116,10 @@ public class CourseController {
     }
 	
     @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
-    @GetMapping("/delete-group/{groupId}")
-    public String deleteGroup(@PathVariable Long groupId, @RequestParam Long courseId) {
+    @GetMapping("/delete-group-from-course/{groupId}")
+    public String deleteGroupFromCourse(@PathVariable Long groupId, @RequestParam Long courseId) {
     	
-    	courseService.deleteGroup(groupId, courseId);
+    	courseService.deleteGroupFromCourse(groupId, courseId);
 
         return "redirect:/courses";
     }

@@ -23,10 +23,10 @@
 						<li class="nav-item"><a class="nav-link" href="/students">Students</a></li>
 						<li class="nav-item"><a class="nav-link" href="/teachers">Teachers</a></li>
 						<li class="nav-item"><a class="nav-link" href="/courses">Courses</a></li>
+						<li class="nav-item"><a class="nav-link" href="/groups">Groups</a></li>
 						<div sec:authorize="hasRole('ADMIN')">
 							<li class="nav-item"><a class="nav-link" href="/users">Users</a></li>
 						</div>
-
 					</ul>
 
 					<div class="navbar-nav ms-auto"  sec:authorize="isAuthenticated()">

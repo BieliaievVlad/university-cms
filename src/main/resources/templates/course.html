@@ -40,7 +40,7 @@
 					<th:block th:each="group : ${courseGroupsMap[teacherCourse.course]}">
 						<li>
 						<span th:text="${group.name}"></span>
-						<form th:action="@{/delete-group/{groupId}(groupId=${group.id})}" style="display:inline;">
+						<form th:action="@{/delete-group-from-course/{groupId}(groupId=${group.id})}" style="display:inline;">
 						<input type="hidden" name="courseId" th:value="${teacherCourse.course.id}" />
                     		<button type="submit" class="btn btn-danger btn-sm">Delete</button>
                 		</form>						
@@ -54,7 +54,7 @@
         </div>
 
         <button type="submit" class="btn btn-primary">Save</button>
-        <a href="/courses" class="btn btn-secondary">Cancel</a>
+        <a href="/courses" class="btn btn-secondary">Back</a>
 </div>
 
 <script src="/webjars/bootstrap/5.2.3/js/bootstrap.bundle.min.js"></script>

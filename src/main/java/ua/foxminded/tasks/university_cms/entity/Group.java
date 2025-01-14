@@ -14,7 +14,6 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@RequiredArgsConstructor
 public class Group {
 
 	@Id
@@ -25,8 +24,11 @@ public class Group {
 	@NonNull
 	private String name;
 
-	@Column(name = "num_students")
-	@NonNull
+	@Column(name = "num_students", nullable = true)
 	private Long numStudents;
+	
+	public Group(String name) {
+		this.name = name;
+	}
 
 }

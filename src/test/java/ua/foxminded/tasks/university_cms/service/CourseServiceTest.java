@@ -273,7 +273,7 @@ class CourseServiceTest {
 		when(groupCourseRepository.findById(groupCourse.getId())).thenReturn(Optional.of(groupCourse));
 		doNothing().when(groupCourseRepository).delete(any(GroupCourse.class));
 		
-		courseService.deleteGroup(groupId, courseId);
+		courseService.deleteGroupFromCourse(groupId, courseId);
 		
 		verify(groupRepository, times(1)).findById(groupId);
 		verify(courseRepository, times(1)).findById(courseId);
