@@ -13,7 +13,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 
+import ua.foxminded.tasks.university_cms.entity.Course;
 import ua.foxminded.tasks.university_cms.entity.Group;
+import ua.foxminded.tasks.university_cms.entity.GroupCourse;
+import ua.foxminded.tasks.university_cms.repository.GroupCourseRepository;
 import ua.foxminded.tasks.university_cms.repository.GroupRepository;
 
 @SpringBootTest
@@ -21,7 +24,10 @@ import ua.foxminded.tasks.university_cms.repository.GroupRepository;
 class GroupServiceTest {
 
 	@MockBean
-	GroupRepository repository;
+	GroupRepository groupRepository;
+	
+	@MockBean
+	GroupCourseRepository groupCourseRepository;
 
 	@Autowired
 	GroupService service;
@@ -31,12 +37,12 @@ class GroupServiceTest {
 
 		Group group = new Group(1L, "Group_1", 10L);
 		List<Group> expectedList = Arrays.asList(group);
-		when(repository.findAll()).thenReturn(expectedList);
+		when(groupRepository.findAll()).thenReturn(expectedList);
 
 		List<Group> actualList = service.findAll();
 
 		assertEquals(expectedList, actualList);
-		verify(repository, times(1)).findAll();
+		verify(groupRepository, times(1)).findAll();
 	}
 
 	@Test
@@ -45,35 +51,49 @@ class GroupServiceTest {
 		Long searchId = 1L;
 		Group expected = new Group(1L, "Course_1", 10L);
 		Optional<Group> optGroup = Optional.of(expected);
-		when(repository.findById(searchId)).thenReturn(optGroup);
+		when(groupRepository.findById(searchId)).thenReturn(optGroup);
 
 		Group actual = service.findById(searchId);
 
 		assertEquals(expected, actual);
-		verify(repository, times(1)).findById(searchId);
+		verify(groupRepository, times(1)).findById(searchId);
 
 	}
 
 	@Test
 	void save_ValidValue_CalledOnce() {
 		Group group = new Group(1L, "Course_1", 10L);
-		when(repository.save(group)).thenReturn(group);
+		when(groupRepository.save(group)).thenReturn(group);
 
 		service.save(group);
 
-		verify(repository, times(1)).save(group);
+		verify(groupRepository, times(1)).save(group);
 	}
 
 	@Test
 	void delete_ValidValue_CalledOnce() {
 		Long id = 1L;
 		Group group = new Group(1L, "Course_1", 10L);
-		when(repository.findById(id)).thenReturn(Optional.of(group));
-		doNothing().when(repository).delete(group);
+		when(groupRepository.findById(id)).thenReturn(Optional.of(group));
+		doNothing().when(groupRepository).delete(group);
 
 		service.delete(id);
 
-		verify(repository, times(1)).delete(group);
+		verify(groupRepository, times(1)).delete(group);
+	}
+	
+	@Test
+	void findByCourse_ValidValue_ReturnsExpected() {
+		
+		Course course = new Course(1L, "Course_Name");
+		Group group = new Group(1L, "Group_Name", 10L);
+		GroupCourse groupCourse = new GroupCourse(group, course);
+		when(groupCourseRepository.findByCourseId(course.getId())).thenReturn(List.of(groupCourse));
+		
+		List<Group> actual = service.findByCourse(course);
+		
+		verify(groupCourseRepository, times(1)).findByCourseId(course.getId());
+		assertEquals(List.of(group), actual);
 	}
 
 }

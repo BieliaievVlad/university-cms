@@ -19,7 +19,7 @@ public class DataGeneratorService {
 	private String createTables;
 	private String generateGroups;
 	private String generateStudents;
-	private String generateStudentsCourses;
+	private String generateGroupsCourses;
 	private String dropTempTables;
 	private String updateGroups;
 	private String generateTeachers;
@@ -44,7 +44,7 @@ public class DataGeneratorService {
 			executeSqlQuery(generateRoles);
 			executeSqlQuery(generateGroups);
 			executeSqlQuery(generateStudents);
-			executeSqlQuery(generateStudentsCourses);
+			executeSqlQuery(generateGroupsCourses);
 			executeSqlQuery(updateGroups);
 			executeSqlQuery(generateTeachers);
 			executeSqlQuery(generateTeachersCourses);
@@ -64,7 +64,7 @@ public class DataGeneratorService {
 		createTables = DBUtil.readQueryFromFile(CREATE_TABLES);
 		generateGroups = DBUtil.readQueryFromFile(GENERATE_GROUPS);
 		generateStudents = DBUtil.readQueryFromFile(GENERATE_STUDENTS);
-		generateStudentsCourses = DBUtil.readQueryFromFile(GENERATE_STUDENTS_COURSES);
+		generateGroupsCourses = DBUtil.readQueryFromFile(GENERATE_GROUPS_COURSES);
 		updateGroups = DBUtil.readQueryFromFile(UPDATE_GROUPS);
 		dropTempTables = DBUtil.readQueryFromFile(DROP_TEMP_TABLES);
 		generateTeachers = DBUtil.readQueryFromFile(GENERATE_TEACHERS);

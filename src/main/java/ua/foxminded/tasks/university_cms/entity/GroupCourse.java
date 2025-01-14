@@ -8,26 +8,24 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
 import jakarta.persistence.Table;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
-@Table(name = "teachers_courses", schema = "university")
+@Table(name = "groups_courses", schema = "university")
 @Getter
 @Setter
 @NoArgsConstructor
-public class TeacherCourse {
+@AllArgsConstructor
+public class GroupCourse {
 
 	@EmbeddedId
-	private TeacherCourseId id;
+	private GroupCourseId id;
 
 	@ManyToOne
-	@MapsId("teacherId")
-	@JoinColumn(name = "teacher_id")
+	@MapsId("groupId")
+	@JoinColumn(name = "group_id")
 	@NonNull
-	private Teacher teacher;
+	private Group group;
 
 	@ManyToOne
 	@MapsId("courseId")
@@ -35,24 +33,23 @@ public class TeacherCourse {
 	@NonNull
 	private Course course;
 	
-	public TeacherCourse(Teacher teacher, Course course) {
-	    this.teacher = teacher;
-	    this.course = course;
-	    this.id = new TeacherCourseId(teacher.getId(), course.getId());
+	public GroupCourse(Group group, Course course) {
+		this.group = group;
+		this.course = course;
+		this.id = new GroupCourseId(group.getId(), course.getId());
 	}
 	
 	@Override
 	public boolean equals(Object o) {
 	    if (this == o) return true;
 	    if (o == null || getClass() != o.getClass()) return false;
-	    TeacherCourse that = (TeacherCourse) o;
-	    return Objects.equals(teacher, that.teacher) && Objects.equals(course, that.course);
+	    GroupCourse that = (GroupCourse) o;
+	    return Objects.equals(group, that.group) && Objects.equals(course, that.course);
 	}
 
 	@Override
 	public int hashCode() {
-	    return Objects.hash(teacher, course);
+	    return Objects.hash(group, course);
 	}
 
 }
-

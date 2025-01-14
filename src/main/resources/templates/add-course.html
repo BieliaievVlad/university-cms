@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Add Course</title>
+<link rel="stylesheet"
+	href="/webjars/bootstrap/5.2.3/css/bootstrap.min.css">
+</head>
+<body>
+
+	<div th:replace="~{layout :: navbar}"></div>
+
+	<div class="container mt-4">
+		<h1 class="text-center">Add New Course</h1>
+
+		<form action="/add-course" method="post" class="mt-4">
+			<div class="mb-3">
+				<label for="name" class="form-label">Course Name</label> <input
+					type="text" class="form-control" id="courseName" name="courseName"
+					required>
+			</div>
+			<div class="mb-3">
+				<label for="teacher" class="form-label">Teacher</label> <select
+					class="form-select" id="teacherId" name="teacherId" required>
+					<option value="1">Victor Frankenstein</option>
+					<option value="2">Walter White</option>
+					<option value="3">Chuck Norris</option>
+					<option value="4">Pablo Picasso</option>
+					<option value="5">Helena Blavatsky</option>
+					<option value="6">Jack Sparrow</option>
+					<option value="7">Gordon Freeman</option>
+					<option value="8">Sergey Lukyanenko</option>
+					<option value="9">Jules Winnfield</option>
+				</select>
+			</div>
+			<button type="submit" class="btn btn-primary">Add Course</button>
+		</form>
+		<div class="mt-3">
+			<a href="/" class="btn btn-primary">Back to Home</a>
+		</div>
+
+	</div>
+
+	<script src="/webjars/bootstrap/5.2.3/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,5 +1,6 @@
 package ua.foxminded.tasks.university_cms.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -7,27 +8,32 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import jakarta.persistence.EntityNotFoundException;
+import ua.foxminded.tasks.university_cms.entity.Course;
 import ua.foxminded.tasks.university_cms.entity.Group;
+import ua.foxminded.tasks.university_cms.entity.GroupCourse;
+import ua.foxminded.tasks.university_cms.repository.GroupCourseRepository;
 import ua.foxminded.tasks.university_cms.repository.GroupRepository;
 
 @Service
 public class GroupService {
 
-	private final GroupRepository repository;
+	private final GroupRepository groupRepository;
+	private final GroupCourseRepository groupCourseRepository;
 
 	@Autowired
-	public GroupService(GroupRepository repository) {
-		this.repository = repository;
+	public GroupService(GroupRepository groupRepository, GroupCourseRepository groupCourseRepository) {
+		this.groupRepository = groupRepository;
+		this.groupCourseRepository = groupCourseRepository;
 	}
 
 	public List<Group> findAll() {
 
-		return repository.findAll();
+		return groupRepository.findAll();
 	}
 
 	public Group findById(Long searchId) {
 
-		Optional<Group> optGroup = repository.findById(searchId);
+		Optional<Group> optGroup = groupRepository.findById(searchId);
 
 		if (optGroup.isPresent()) {
 
@@ -45,20 +51,33 @@ public class GroupService {
 			throw new IllegalArgumentException("Group is not valid.");
 		}
 
-		repository.save(group);
+		groupRepository.save(group);
 	}
 
 	public void delete(Long groupId) {
 
-		Optional<Group> optGroup = repository.findById(groupId);
+		Optional<Group> optGroup = groupRepository.findById(groupId);
 
 		if (optGroup.isPresent()) {
 
-			repository.delete(optGroup.get());
+			groupRepository.delete(optGroup.get());
 
 		} else {
 			throw new EntityNotFoundException("Group is not found.");
 		}
+	}
+	
+	public List<Group> findByCourse(Course course) {
+		
+		Long courseId = course.getId();
+		List<GroupCourse> groupCourses = groupCourseRepository.findByCourseId(courseId);
+		List<Group> groups = new ArrayList<>();
+		
+		for (GroupCourse groupCourse : groupCourses) {
+			
+			groups.add(groupCourse.getGroup());
+		}
+		return groups;
 	}
 
 	private boolean isGroupValid(Group group) {

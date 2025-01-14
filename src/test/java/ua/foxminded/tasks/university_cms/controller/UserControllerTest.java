@@ -5,11 +5,8 @@ import static org.mockito.Mockito.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.web.servlet.MockMvc;
@@ -50,9 +47,9 @@ class UserControllerTest {
 	@Test
 	@WithMockUser(username = "admin", roles = "ADMIN")
 	void showAddUserForm_addUserPageRequest_returnsAddUserView() throws Exception {
-		mockMvc.perform(MockMvcRequestBuilders.get("/addUser"))
+		mockMvc.perform(MockMvcRequestBuilders.get("/add-user"))
 		   	   .andExpect(MockMvcResultMatchers.status().isOk())
-		   	   .andExpect(MockMvcResultMatchers.view().name("addUser"));
+		   	   .andExpect(MockMvcResultMatchers.view().name("add-user"));
 		
 	}
 	
@@ -70,11 +67,11 @@ class UserControllerTest {
         when(passwordEncoder.encode(password)).thenReturn("encodedPassword");
         doNothing().when(userService).save(any(User.class));
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/add")
-						.with(SecurityMockMvcRequestPostProcessors.csrf())
-                        .param("username", username)
-                        .param("password", password)
-                        .param("role", role))
+        mockMvc.perform(MockMvcRequestBuilders.post("/add-user")
+											  .with(SecurityMockMvcRequestPostProcessors.csrf())
+											  .param("username", username)
+											  .param("password", password)
+											  .param("role", role))
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
                 .andExpect(MockMvcResultMatchers.header().string("Location", "/users"));
 
@@ -89,7 +86,7 @@ class UserControllerTest {
     	Long id = 1L;
     	doNothing().when(userService).delete(id);
     	
-    	mockMvc.perform(MockMvcRequestBuilders.get("/delete/{id}", id))
+    	mockMvc.perform(MockMvcRequestBuilders.get("/delete-user/{id}", id))
         	   .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
         	   .andExpect(MockMvcResultMatchers.header().string("Location", "/users"));
     	verify(userService, times(1)).delete(id);
