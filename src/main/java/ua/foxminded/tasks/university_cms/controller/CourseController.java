@@ -14,29 +14,37 @@ import org.springframework.web.bind.annotation.RequestParam;
 import ua.foxminded.tasks.university_cms.entity.Teacher;
 import ua.foxminded.tasks.university_cms.entity.TeacherCourse;
 import ua.foxminded.tasks.university_cms.form.CourseFormData;
-import ua.foxminded.tasks.university_cms.form.CoursesData;
+import ua.foxminded.tasks.university_cms.form.CoursesFormData;
 import ua.foxminded.tasks.university_cms.form.EditGroupsFormData;
-import ua.foxminded.tasks.university_cms.service.CourseService;
+import ua.foxminded.tasks.university_cms.service.FormService;
+import ua.foxminded.tasks.university_cms.service.GroupCourseService;
 import ua.foxminded.tasks.university_cms.service.TeacherCourseService;
 import ua.foxminded.tasks.university_cms.service.TeacherService;
 
 @Controller
 public class CourseController {
 	
-	@Autowired
-	CourseService courseService;
+	private final TeacherService teacherService;
+	private final TeacherCourseService teacherCourseService;
+	private final GroupCourseService groupCourseService;
+	private final FormService formService;
 	
 	@Autowired
-	TeacherService teacherService;
-	
-	@Autowired
-	TeacherCourseService teacherCourseService;
+	public CourseController(TeacherService teacherService, 
+							TeacherCourseService teacherCourseService, 
+							FormService formService, 
+							GroupCourseService groupCourseService) {
+		this.teacherService = teacherService;
+		this.teacherCourseService = teacherCourseService;
+		this.formService = formService;
+		this.groupCourseService = groupCourseService;
+	}
 		
 	@PreAuthorize("hasAnyRole('ADMIN', 'STAFF', 'TEACHER', 'STUDENT')")
 	@GetMapping("/courses")
 	public String showCoursesForm(Model model) {
 
-		CoursesData data = courseService.prepareCoursesData();
+		CoursesFormData data = formService.prepareCoursesFormData();
 		
 		model.addAttribute("teacherCourses", data.getTeacherCourses());
 		model.addAttribute("courseGroupsMap", data.getCourseGroupsMap());
@@ -53,7 +61,7 @@ public class CourseController {
     @PostMapping("/add-course")
     public String addCourse(@RequestParam String courseName, @RequestParam Long teacherId) {
     	
-    	courseService.saveCourse(courseName, teacherId);
+    	teacherCourseService.saveCourse(courseName, teacherId);
     	
     	return "redirect:/courses";
     }
@@ -62,7 +70,7 @@ public class CourseController {
 	@GetMapping("/course/{id}")
     public String showCourseForm(@PathVariable Long id, Model model) {
 
-		CourseFormData data = courseService.prepareCourseFormData(id);
+		CourseFormData data = formService.prepareCourseFormData(id);
         
         model.addAttribute("teachers", data.getTeachers());
         model.addAttribute("groups", data.getGroups());
@@ -88,7 +96,7 @@ public class CourseController {
     @PostMapping("/update-teacher")
     public String updateTeacher(@ModelAttribute TeacherCourse teacherCourse) {
 			
-		courseService.updateTeacherCourse(teacherCourse);
+		teacherCourseService.updateTeacherCourse(teacherCourse);
         
         return "redirect:/courses";
     }
@@ -97,7 +105,7 @@ public class CourseController {
 	@GetMapping("/edit-groups/{id}")
 	public String showEditGroupsForm(@PathVariable Long id, Model model) {
 		
-		EditGroupsFormData data = courseService.prepareEditGroupsFormData(id);
+		EditGroupsFormData data = formService.prepareEditGroupsFormData(id);
         
         model.addAttribute("courseGroupsMap", data.getCourseGroupsMap());
         model.addAttribute("filteredGroups", data.getFilteredGroups());
@@ -110,7 +118,7 @@ public class CourseController {
     @PostMapping("/update-groups")
     public String updateGroups(@RequestParam("group") Long groupId, Long courseId) {
 		
-		courseService.updateGroups(groupId, courseId);
+		groupCourseService.updateGroupCourse(groupId, courseId);
         
         return "redirect:/courses";
     }
@@ -119,7 +127,7 @@ public class CourseController {
     @GetMapping("/delete-group-from-course/{groupId}")
     public String deleteGroupFromCourse(@PathVariable Long groupId, @RequestParam Long courseId) {
     	
-    	courseService.deleteGroupFromCourse(groupId, courseId);
+    	groupCourseService.deleteGroupCourse(groupId, courseId);
 
         return "redirect:/courses";
     }
@@ -128,7 +136,7 @@ public class CourseController {
     @GetMapping("/delete-course/{id}")
     public String deleteCourse(@PathVariable Long id) {
    	
-    	courseService.deleteCourse(id);
+    	teacherCourseService.deleteTeacherCourse(id);
 
         return "redirect:/courses";
     }

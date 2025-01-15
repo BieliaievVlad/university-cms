@@ -12,5 +12,6 @@ import ua.foxminded.tasks.university_cms.entity.GroupCourseId;
 public interface GroupCourseRepository extends JpaRepository<GroupCourse, GroupCourseId> {
 
 	List<GroupCourse> findByCourseId(Long courseId);
+	List<GroupCourse> findByGroupId(Long groupId);
 
 }

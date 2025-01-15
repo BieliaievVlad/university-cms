@@ -1,8 +1,11 @@
 package ua.foxminded.tasks.university_cms.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
@@ -12,17 +15,31 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 
 import ua.foxminded.tasks.university_cms.entity.Course;
+import ua.foxminded.tasks.university_cms.entity.Group;
+import ua.foxminded.tasks.university_cms.entity.GroupCourse;
 import ua.foxminded.tasks.university_cms.entity.Teacher;
 import ua.foxminded.tasks.university_cms.entity.TeacherCourse;
 import ua.foxminded.tasks.university_cms.entity.TeacherCourseId;
+import ua.foxminded.tasks.university_cms.repository.CourseRepository;
+import ua.foxminded.tasks.university_cms.repository.GroupCourseRepository;
 import ua.foxminded.tasks.university_cms.repository.TeacherCourseRepository;
+import ua.foxminded.tasks.university_cms.repository.TeacherRepository;
 
 @SpringBootTest
 @ActiveProfiles("test")
 class TeacherCourseServiceTest {
 
 	@MockBean
-	TeacherCourseRepository repository;
+	CourseRepository courseRepository;
+	
+	@MockBean
+	TeacherRepository teacherRepository;
+	
+	@MockBean
+	TeacherCourseRepository teacherCourseRepository;
+	
+	@MockBean
+	GroupCourseRepository groupCourseRepository;
 
 	@Autowired
 	TeacherCourseService service;
@@ -33,13 +50,13 @@ class TeacherCourseServiceTest {
 		Teacher teacher = new Teacher(1L, "FirstName", "LastName");
 		TeacherCourse teacherCourse = new TeacherCourse(teacher, course);
 		TeacherCourseId id = new TeacherCourseId(teacherCourse.getTeacher().getId(), teacherCourse.getCourse().getId());
-		when(repository.findById(id)).thenReturn(Optional.empty());
-		when(repository.save(teacherCourse)).thenReturn(teacherCourse);
+		when(teacherCourseRepository.findById(id)).thenReturn(Optional.empty());
+		when(teacherCourseRepository.save(teacherCourse)).thenReturn(teacherCourse);
 
 		service.save(teacherCourse);
 
-		verify(repository, times(1)).findById(id);
-	    verify(repository, times(1)).save(argThat(savedCourse -> 
+		verify(teacherCourseRepository, times(1)).findById(id);
+	    verify(teacherCourseRepository, times(1)).save(argThat(savedCourse -> 
         										  savedCourse.getTeacher().equals(teacherCourse.getTeacher()) &&
         										  savedCourse.getCourse().equals(teacherCourse.getCourse())
 	    										  ));
@@ -52,12 +69,12 @@ class TeacherCourseServiceTest {
 		Teacher teacher = new Teacher(1L, "FirstName", "LastName");
 		TeacherCourse teacherCourse = new TeacherCourse(teacher, course);
 		TeacherCourseId id = new TeacherCourseId(teacherCourse.getTeacher().getId(), teacherCourse.getCourse().getId());
-		when(repository.findById(id)).thenReturn(Optional.of(teacherCourse));
-		doNothing().when(repository).delete(teacherCourse);
+		when(teacherCourseRepository.findById(id)).thenReturn(Optional.of(teacherCourse));
+		doNothing().when(teacherCourseRepository).delete(teacherCourse);
 
 		service.delete(teacherCourse);
 
-	    verify(repository, times(1)).delete(argThat(deletedCourse -> 
+	    verify(teacherCourseRepository, times(1)).delete(argThat(deletedCourse -> 
 		  										    deletedCourse.getTeacher().equals(teacherCourse.getTeacher()) &&
 		  										    deletedCourse.getCourse().equals(teacherCourse.getCourse())
 	    										    ));
@@ -68,12 +85,94 @@ class TeacherCourseServiceTest {
 		Course course = new Course(1L, "Course_Name");
 		Teacher teacher = new Teacher(1L, "FirstName", "LastName");
 		TeacherCourse teacherCourse = new TeacherCourse(teacher, course);
-		when(repository.findByCourseId(course.getId())).thenReturn(teacherCourse);
+		when(teacherCourseRepository.findByCourseId(course.getId())).thenReturn(teacherCourse);
 		
-		TeacherCourse actual = repository.findByCourseId(course.getId());
+		TeacherCourse actual = teacherCourseRepository.findByCourseId(course.getId());
 		
-		verify(repository, times(1)).findByCourseId(course.getId());
+		verify(teacherCourseRepository, times(1)).findByCourseId(course.getId());
 		assertEquals(teacherCourse, actual);
+	}
+	
+	@Test
+	void saveCourse_ValidValues_CalledMethods() {
+		
+		String courseName = "Course_Name";
+		Long id = 1L;
+		Teacher teacher = new Teacher(1L, "First_Name", "Last_Name");
+		Course course = new Course(1L, "Course_Name");
+		TeacherCourse teacherCourse = new TeacherCourse(teacher, course);
+
+	    when(courseRepository.save(any(Course.class))).thenAnswer(invocation -> {
+	        													  Course savedCourse = invocation.getArgument(0);
+	        													  savedCourse.setId(id);
+	        													  return savedCourse;
+	    														  });
+        when(teacherRepository.findById(1L)).thenReturn(Optional.of(teacher));
+        when(courseRepository.findById(anyLong())).thenReturn(Optional.of(course));
+        when(teacherCourseRepository.save(any(TeacherCourse.class))).thenReturn(teacherCourse);
+	
+		service.saveCourse(courseName, id);
+		
+		verify(courseRepository, times(1)).save(any(Course.class));
+		verify(teacherRepository, times(1)).findById(id);
+		verify(courseRepository, times(1)).findById(id);
+		verify(teacherCourseRepository, times(1)).save(any(TeacherCourse.class));	
+	}
+	
+	@Test
+	void updateTeacherCourse_ValidValue_CalledMethods() {
+		
+		Long id = 1L;
+		Course course = new Course(1L, "Course_Name");
+		Teacher teacher = new Teacher(1L, "First_Name", "Last_Name");
+		TeacherCourse teacherCourse = new TeacherCourse(teacher, course);
+		TeacherCourse newTeacherCourse = new TeacherCourse();
+		
+		when(courseRepository.findById(id)).thenReturn(Optional.of(course));
+		when(teacherCourseRepository.findByCourseId(id)).thenReturn(teacherCourse);
+		when(teacherCourseRepository.findById(teacherCourse.getId())).thenReturn(Optional.of(teacherCourse))
+																	 .thenReturn(Optional.empty());
+		doNothing().when(teacherCourseRepository).delete(any(TeacherCourse.class));
+		when(teacherCourseRepository.save(any(TeacherCourse.class))).thenReturn(newTeacherCourse);
+		
+		service.updateTeacherCourse(teacherCourse);
+		
+		verify(courseRepository, times(1)).findById(id);
+		verify(teacherCourseRepository, times(1)).findByCourseId(id);
+		verify(teacherCourseRepository, times(2)).findById(teacherCourse.getId());
+		verify(teacherCourseRepository, times(1)).delete(any(TeacherCourse.class));
+		verify(teacherCourseRepository, times(1)).save(any(TeacherCourse.class));
+	}
+	
+	@Test
+	void deleteTeacherCourse_ValidValue_CalledMethods() {
+		
+		Long id = 1L;
+		Group group = new Group(1L, "Group_Name", 10L);
+		Course course = new Course(1L, "Course_Name");
+		Teacher teacher = new Teacher(1L, "First_Name", "Last_Name");
+		TeacherCourse teacherCourse = new TeacherCourse(teacher, course);
+		GroupCourse groupCourse = new GroupCourse(group, course);
+		
+		when(teacherCourseRepository.findByCourseId(id)).thenReturn(teacherCourse);
+		when(groupCourseRepository.findByCourseId(id)).thenReturn(List.of(groupCourse));
+		when(groupCourseRepository.findById(groupCourse.getId())).thenReturn(Optional.of(groupCourse));
+		when(teacherCourseRepository.findById(teacherCourse.getId())).thenReturn(Optional.of(teacherCourse));
+		when(courseRepository.findById(id)).thenReturn(Optional.of(course));
+		doNothing().when(groupCourseRepository).delete(any(GroupCourse.class));
+		doNothing().when(teacherCourseRepository).delete(any(TeacherCourse.class));
+		doNothing().when(courseRepository).delete(any(Course.class));
+		
+		service.deleteTeacherCourse(id);
+		
+		verify(teacherCourseRepository, times(1)).findByCourseId(id);
+		verify(groupCourseRepository, times(1)).findByCourseId(id);
+		verify(groupCourseRepository, times(1)).findById(groupCourse.getId());
+		verify(teacherCourseRepository, times(1)).findById(teacherCourse.getId());
+		verify(courseRepository, times(1)).findById(id);
+		verify(groupCourseRepository, times(1)).delete(any(GroupCourse.class));
+		verify(teacherCourseRepository, times(1)).delete(any(TeacherCourse.class));
+		verify(courseRepository, times(1)).delete(any(Course.class));
 	}
 
 }

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Edit Courses</title>
+<link rel="stylesheet" href="/webjars/bootstrap/5.2.3/css/bootstrap.min.css">
+</head>
+<body>
+
+<div th:replace="~{layout :: navbar}"></div>
+
+<div class="container mt-4">
+    <h1 class="text-center">Edit Courses</h1>
+    
+    <div th:if="${error}" class="alert alert-danger" role="alert">
+       		 <span th:text="${error}"></span>
+    </div>       
+
+	<form action="/update-courses" method="post">
+    	<div class="mb-3">
+        	<label for="course" class="form-label">Course</label>
+        	<select name="course"  class="form-control" id="course">
+            	<option th:each="course : ${filteredCourses}" th:value="${course.id}" th:text="${course.name}"></option>
+        	</select>
+    	</div>
+    		<input type="hidden" name="groupId" th:value="${group.id}" />
+    	<button type="submit" class="btn btn-primary">Save</button>
+	</form>	
+	
+	<div class="mt-3">
+		<a href="javascript:history.back()" class="btn btn-secondary">Cancel</a>
+	</div>
+    
+</div>
+
+<script src="/webjars/bootstrap/5.2.3/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

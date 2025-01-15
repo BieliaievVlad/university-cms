@@ -26,15 +26,26 @@
 					<tr>
 						<th sec:authorize="hasAnyRole('ADMIN', 'STAFF')">ID</th>
 						<th>Group</th>
+						<th>Courses</th>
 						<th>Actions</th>
 					</tr>
 				</thead>
 				<tbody>
-					<th:block th:each="group : ${groups}">
+					<th:block th:each="group : ${groups}" th:if="${group.id != 0}">
 						<tr>
 							<td sec:authorize="hasAnyRole('ADMIN', 'STAFF')" th:text="${group.id}"></td>
 							<td th:text="${group.name}"></td>
-
+							<td>
+								<ul>
+									<th:block
+										th:each="course : ${groupCoursesMap.get(group)}">
+										<li th:text="${course.name}"></li>
+									</th:block>
+									<th:block th:if="${#lists.isEmpty(groupCoursesMap.get(group))}">
+           								<li>No courses available</li>
+        							</th:block>
+								</ul>
+							</td>
 							<td>
 							<a th:href="@{/group/{id}(id=${group.id})}" class="btn btn-primary">Details</a> 
 							<a sec:authorize="hasRole('ADMIN')" th:href="@{/delete-group/{id}(id=${group.id})}" class="btn btn-danger btn-sm">Delete</a>

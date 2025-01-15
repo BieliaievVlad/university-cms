@@ -95,5 +95,15 @@ class GroupServiceTest {
 		verify(groupCourseRepository, times(1)).findByCourseId(course.getId());
 		assertEquals(List.of(group), actual);
 	}
+	
+	@Test
+	void saveGroup_Valid_Value_CalledMethods() {
+		fail("Not yet implemented");
+	}
+	
+	@Test
+	void deleteGroup_Valid_Value_CalledMethods() {
+		fail("Not yet implemented");
+	}
 
 }
