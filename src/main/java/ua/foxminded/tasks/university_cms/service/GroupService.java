@@ -86,11 +86,6 @@ public class GroupService {
 		
 		groupRepository.save(newGroup);
 	}
-	
-	public void deleteGroup(Long id) {
-		
-		delete(id);
-	}
 
 	private boolean isGroupValid(Group group) {
 		return group != null &&  group.getName() != null;

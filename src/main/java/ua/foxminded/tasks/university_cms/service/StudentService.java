@@ -69,7 +69,7 @@ public class StudentService {
 	}
 
 	private boolean isStudentValid(Student student) {
-		return student != null && student.getId() != null && student.getFirstName() != null
+		return student != null && student.getFirstName() != null
 				&& student.getLastName() != null;
 	}
 

@@ -1,9 +1,10 @@
 package ua.foxminded.tasks.university_cms.service;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
@@ -16,9 +17,11 @@ import ua.foxminded.tasks.university_cms.entity.Course;
 import ua.foxminded.tasks.university_cms.entity.Group;
 import ua.foxminded.tasks.university_cms.entity.GroupCourse;
 import ua.foxminded.tasks.university_cms.entity.GroupCourseId;
+import ua.foxminded.tasks.university_cms.entity.Student;
 import ua.foxminded.tasks.university_cms.repository.CourseRepository;
 import ua.foxminded.tasks.university_cms.repository.GroupCourseRepository;
 import ua.foxminded.tasks.university_cms.repository.GroupRepository;
+import ua.foxminded.tasks.university_cms.repository.StudentRepository;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -29,6 +32,9 @@ class GroupCourseServiceTest {
 	
 	@MockBean
 	GroupRepository groupRepository;
+	
+	@MockBean
+	StudentRepository studentRepository;
 	
 	@MockBean
 	GroupCourseRepository groupCourseRepository;
@@ -64,7 +70,19 @@ class GroupCourseServiceTest {
 	
 	@Test
 	void findByGroup_ValidValue_CalledMethodsAndReturnsExpected() {
-		fail("Not yet implemented");
+		
+		Long id = 1L;
+		Group group = new Group(1L, "Group_Name", 10L);
+		Course course = new Course(1L, "Course_Name");
+		List<Course> expected = List.of(course);
+		
+		when(groupCourseRepository.findByGroupId(id)).thenReturn(List.of(new GroupCourse(group, course)));
+		
+		List<Course> actual = service.findByGroup(group);
+		
+		assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
+		verify(groupCourseRepository, times(1)).findByGroupId(id);
+		
 	}
 	
 	@Test
@@ -111,12 +129,65 @@ class GroupCourseServiceTest {
 	
 	@Test
 	void addStudentToGroup_ValidValue_CalledMethods() {
-		fail("Not yet implemented");
+		
+		Long studentId = 1L;
+		Long groupId = 1L;
+		Group group = new Group(1L, "Group_Name", 10L);
+		Student student = new Student("First_Name", "Last_Name");
+		
+		when(studentRepository.findById(studentId)).thenReturn(Optional.of(student));
+		when(groupRepository.findById(groupId)).thenReturn(Optional.of(group));
+		when(studentRepository.save(student)).thenReturn(student);
+		
+		service.addStudentToGroup(studentId, groupId);
+		
+		verify(studentRepository, times(1)).findById(studentId);
+		verify(groupRepository, times(1)).findById(groupId);
+		verify(studentRepository, times(1)).save(student);
+		
 	}
 	
 	@Test
 	void removeStudentFromGroup_ValidValue_CalledMethods() {
-		fail("Not yet implemented");
+		
+		Long id = 1L;
+		Student student = new Student("First_Name", "Last_Name");
+		Group dummyGroup = new Group(0L, "dummy", 0L);
+		
+		when(studentRepository.findById(id)).thenReturn(Optional.of(student));
+		when(groupRepository.findById(0L)).thenReturn(Optional.of(dummyGroup));
+		when(studentRepository.save(student)).thenReturn(student);
+		
+		service.removeStudentFromGroup(id);
+		
+		verify(studentRepository, times(1)).findById(id);
+		verify(groupRepository, times(1)).findById(0L);
+		verify(studentRepository, times(1)).save(student);
+	}
+	
+	@Test
+	void deleteGroupAndAssociations_ValidValue_CalledMethods() {
+		
+		Long id = 1L;
+		Group group = new Group(1L, "Group_Name", 10L);
+		Course course = new Course(1L, "Course_Name");
+		Student student = new Student("First_Name", "Last_Name");
+		
+		when(groupCourseRepository.findByGroupId(id)).thenReturn(List.of(new GroupCourse(group, course)));
+		when(studentRepository.findByGroupId(id)).thenReturn(List.of(student));
+		doNothing().when(groupCourseRepository).delete(any(GroupCourse.class));
+		when(studentRepository.findById(anyLong())).thenReturn(Optional.of(student));
+		when(studentRepository.save(any(Student.class))).thenReturn(student);
+		doNothing().when(groupRepository).delete(any(Group.class));
+		
+		service.deleteGroupAndAssociations(id);
+		
+		verify(groupCourseRepository, times(1)).findByGroupId(id);
+		verify(studentRepository, times(1)).findByGroupId(id);
+		verify(groupCourseRepository, times(1)).delete(any(GroupCourse.class));
+		verify(studentRepository, times(1)).findById(anyLong());
+		verify(studentRepository, times(1)).save(any(Student.class));
+		verify(groupRepository, times(1)).delete(any(Group.class));	
 	}
 
 }

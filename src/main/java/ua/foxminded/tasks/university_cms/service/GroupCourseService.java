@@ -114,6 +114,23 @@ public class GroupCourseService {
 		studentService.save(student);
 	}
 	
+	public void deleteGroupAndAssociations(Long id) {
+		
+		List<GroupCourse> groupCourses = findByGroupId(id);
+		List<Student> students = studentService.findByGroupId(id);
+		
+		for (GroupCourse gc : groupCourses) {
+			delete(gc);
+		}
+		
+		for (Student s : students) {
+			Long studentId = s.getId();
+			removeStudentFromGroup(studentId);
+		}
+		
+		groupService.delete(id);
+	}
+	
 	public List<GroupCourse> findByCourseId(Long courseId) {
 		
 		return repository.findByCourseId(courseId);

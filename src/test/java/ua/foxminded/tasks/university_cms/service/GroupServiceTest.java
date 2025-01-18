@@ -98,12 +98,14 @@ class GroupServiceTest {
 	
 	@Test
 	void saveGroup_Valid_Value_CalledMethods() {
-		fail("Not yet implemented");
+		
+		String name = "New_Group_Name";
+		Group newGroup = new Group("New_Group_Name");
+		
+		when(groupRepository.save(any(Group.class))).thenReturn(newGroup);
+		
+		service.saveGroup(name);
+		
+		verify(groupRepository, times(1)).save(any(Group.class));
 	}
-	
-	@Test
-	void deleteGroup_Valid_Value_CalledMethods() {
-		fail("Not yet implemented");
-	}
-
 }

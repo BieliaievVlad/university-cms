@@ -1,7 +1,6 @@
 package ua.foxminded.tasks.university_cms.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import java.util.HashMap;
@@ -22,7 +21,9 @@ import ua.foxminded.tasks.university_cms.entity.Teacher;
 import ua.foxminded.tasks.university_cms.entity.TeacherCourse;
 import ua.foxminded.tasks.university_cms.form.CourseFormData;
 import ua.foxminded.tasks.university_cms.form.CoursesFormData;
+import ua.foxminded.tasks.university_cms.form.EditCoursesFormData;
 import ua.foxminded.tasks.university_cms.form.EditGroupsFormData;
+import ua.foxminded.tasks.university_cms.form.GroupsFormData;
 import ua.foxminded.tasks.university_cms.repository.CourseRepository;
 import ua.foxminded.tasks.university_cms.repository.GroupCourseRepository;
 import ua.foxminded.tasks.university_cms.repository.GroupRepository;
@@ -138,13 +139,45 @@ class FormServiceTest {
 	}
 
 	@Test
-	void testPrepareGroupsFormData() {
-		fail("Not yet implemented");
+	void prepareGroupsFormData_ValidValue_CalledMethodsAndReturnsExpected() {
+	
+		Long id = 1L;
+		Group group = new Group(1L, "Group_Name", 10L);
+		Course course = new Course(1L, "Course_Name");
+		GroupsFormData expected = new GroupsFormData(List.of(group), Map.of(group, List.of(course)));
+		
+		when(groupRepository.findAll()).thenReturn(List.of(group));
+		when(groupCourseRepository.findByGroupId(id)).thenReturn(List.of(new GroupCourse(group, course)));
+		
+		GroupsFormData actual = formService.prepareGroupsFormData();
+		
+		assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
+		verify(groupRepository, times(1)).findAll();
+		verify(groupCourseRepository, times(1)).findByGroupId(id);
+		
+		
 	}
 
 	@Test
-	void testPrepareEditCoursesFormData() {
-		fail("Not yet implemented");
+	void prepareEditCoursesFormData_ValidValue_CalledMethodsAndReturnsExpected() {
+		
+		Long id = 1L;
+		Group group = new Group(1L, "Group_Name", 10L);
+		Course course1 = new Course(1L, "Course_Name1");
+		Course course2 = new Course(2L, "Course_Name2");
+		EditCoursesFormData expected = new EditCoursesFormData(group, List.of(course2));
+		
+		when(groupRepository.findById(id)).thenReturn(Optional.of(group));
+		when(courseRepository.findAll()).thenReturn(List.of(course1, course2));
+		when(groupCourseRepository.findByGroupId(id)).thenReturn(List.of(new GroupCourse(group, course1)));
+		
+		EditCoursesFormData actual = formService.prepareEditCoursesFormData(id);
+		
+		assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
+		verify(groupRepository, times(1)).findById(id);
+		verify(courseRepository, times(1)).findAll();
+		verify(groupCourseRepository, times(1)).findByGroupId(id);
+		
 	}
 
 }

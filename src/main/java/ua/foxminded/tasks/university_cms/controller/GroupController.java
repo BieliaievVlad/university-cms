@@ -113,7 +113,7 @@ public class GroupController {
     @GetMapping("/delete-group/{id}")
     public String deleteGroup(@PathVariable Long id) {
     	
-    	groupService.deleteGroup(id);
+    	groupCourseService.deleteGroupAndAssociations(id);
     	
     	return "redirect:/groups";
     }
