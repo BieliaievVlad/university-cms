@@ -172,11 +172,14 @@ class GroupCourseServiceTest {
 		Group group = new Group(1L, "Group_Name", 10L);
 		Course course = new Course(1L, "Course_Name");
 		Student student = new Student("First_Name", "Last_Name");
+		student.setId(1L);
 		
 		when(groupCourseRepository.findByGroupId(id)).thenReturn(List.of(new GroupCourse(group, course)));
 		when(studentRepository.findByGroupId(id)).thenReturn(List.of(student));
+		when(groupCourseRepository.findById(any(GroupCourseId.class))).thenReturn(Optional.of(new GroupCourse(group, course)));
 		doNothing().when(groupCourseRepository).delete(any(GroupCourse.class));
 		when(studentRepository.findById(anyLong())).thenReturn(Optional.of(student));
+		when(groupRepository.findById(anyLong())).thenReturn(Optional.of(group));
 		when(studentRepository.save(any(Student.class))).thenReturn(student);
 		doNothing().when(groupRepository).delete(any(Group.class));
 		
@@ -184,8 +187,10 @@ class GroupCourseServiceTest {
 		
 		verify(groupCourseRepository, times(1)).findByGroupId(id);
 		verify(studentRepository, times(1)).findByGroupId(id);
+		verify(groupCourseRepository, times(1)).findById(any(GroupCourseId.class));
 		verify(groupCourseRepository, times(1)).delete(any(GroupCourse.class));
 		verify(studentRepository, times(1)).findById(anyLong());
+		verify(groupRepository, times(2)).findById(anyLong());
 		verify(studentRepository, times(1)).save(any(Student.class));
 		verify(groupRepository, times(1)).delete(any(Group.class));	
 	}

@@ -137,8 +137,8 @@ class CourseControllerTest {
 		doNothing().when(teacherCourseService).updateTeacherCourse(teacherCourse);
 		
     	mockMvc.perform(MockMvcRequestBuilders.post("/update-teacher")
-    			.with(SecurityMockMvcRequestPostProcessors.csrf())
-    			.flashAttr("teacherCourse", teacherCourse))
+    				.with(SecurityMockMvcRequestPostProcessors.csrf())
+    				.flashAttr("teacherCourse", teacherCourse))
  	   			.andExpect(MockMvcResultMatchers.status().is3xxRedirection())
  	   			.andExpect(MockMvcResultMatchers.header().string("Location", "/courses"));
     	
