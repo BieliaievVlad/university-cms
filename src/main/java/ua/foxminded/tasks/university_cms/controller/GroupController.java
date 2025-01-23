@@ -128,7 +128,7 @@ public class GroupController {
     	model.addAttribute("students", students);
     	model.addAttribute("group", group);
     	
-    	return "/add-student-to-group";
+    	return "add-student-to-group";
     }
     
     @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")

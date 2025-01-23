@@ -171,7 +171,7 @@ class GroupControllerTest {
 		
 		mockMvc.perform(MockMvcRequestBuilders.get("/add-student-to-group/{id}", id))
 	   	   .andExpect(MockMvcResultMatchers.status().isOk())
-	   	   .andExpect(MockMvcResultMatchers.view().name("/add-student-to-group"));
+	   	   .andExpect(MockMvcResultMatchers.view().name("add-student-to-group"));
 	}
 
 	@Test
