@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import jakarta.persistence.EntityNotFoundException;
+import ua.foxminded.tasks.university_cms.entity.Group;
 import ua.foxminded.tasks.university_cms.entity.Student;
 import ua.foxminded.tasks.university_cms.repository.StudentRepository;
 
@@ -14,10 +15,12 @@ import ua.foxminded.tasks.university_cms.repository.StudentRepository;
 public class StudentService {
 
 	private final StudentRepository repository;
+	private final GroupService groupService;
 
 	@Autowired
-	public StudentService(StudentRepository repository) {
+	public StudentService(StudentRepository repository, GroupService groupService) {
 		this.repository = repository;
+		this.groupService = groupService;
 	}
 
 	public List<Student> findAll() {
@@ -66,6 +69,23 @@ public class StudentService {
 	public List<Student> findByGroupId(Long groupId) {
 		
 		return repository.findByGroupId(groupId);
+	}
+	
+	public void addStudent(String firstName, String lastName) {
+		
+    	Group dummyGroup = groupService.findById(0L);
+		Student newStudent = new Student(firstName, lastName, dummyGroup);
+		save(newStudent);
+	}
+	
+	public void updateStudent(Long studentId, Long groupId) {
+		
+		Group group = groupService.findById(groupId);
+		Student student = findById(studentId);
+
+		student.setGroup(group);
+
+		save(student);
 	}
 
 	private boolean isStudentValid(Student student) {
