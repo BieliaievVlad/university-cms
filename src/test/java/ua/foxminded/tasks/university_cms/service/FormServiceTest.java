@@ -17,6 +17,7 @@ import org.springframework.test.context.ActiveProfiles;
 import ua.foxminded.tasks.university_cms.entity.Course;
 import ua.foxminded.tasks.university_cms.entity.Group;
 import ua.foxminded.tasks.university_cms.entity.GroupCourse;
+import ua.foxminded.tasks.university_cms.entity.Student;
 import ua.foxminded.tasks.university_cms.entity.Teacher;
 import ua.foxminded.tasks.university_cms.entity.TeacherCourse;
 import ua.foxminded.tasks.university_cms.form.CourseFormData;
@@ -27,6 +28,7 @@ import ua.foxminded.tasks.university_cms.form.GroupsFormData;
 import ua.foxminded.tasks.university_cms.repository.CourseRepository;
 import ua.foxminded.tasks.university_cms.repository.GroupCourseRepository;
 import ua.foxminded.tasks.university_cms.repository.GroupRepository;
+import ua.foxminded.tasks.university_cms.repository.StudentRepository;
 import ua.foxminded.tasks.university_cms.repository.TeacherCourseRepository;
 import ua.foxminded.tasks.university_cms.repository.TeacherRepository;
 
@@ -42,6 +44,9 @@ class FormServiceTest {
 	
 	@MockBean
 	GroupRepository groupRepository;
+	
+	@MockBean
+	StudentRepository studentRepository;
 	
 	@MockBean
 	TeacherCourseRepository teacherCourseRepository;
@@ -179,5 +184,22 @@ class FormServiceTest {
 		verify(groupCourseRepository, times(1)).findByGroupId(id);
 		
 	}
-
+	
+	@Test
+	void prepareStudentsFormData_ValidValue_CalledMethodsAndReturnsExpected() {
+		
+		Student student1 = new Student("First_Name1", "Last_Name1");
+		Student student2 = new Student("First_Name2", "Last_Name2");
+		student1.setId(1L);
+		student2.setId(2L);
+		List<Student> resultList = List.of(student2, student1);
+		List<Student> expectedSortedList = List.of(student1, student2);
+		
+		when(studentRepository.findAll()).thenReturn(resultList);
+		
+		List<Student> actual = formService.prepareStudentsFormData();
+		
+		assertThat(actual).usingRecursiveComparison().isEqualTo(expectedSortedList);
+		verify(studentRepository, times(1)).findAll();
+	}
 }

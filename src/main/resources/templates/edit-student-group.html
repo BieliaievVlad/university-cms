@@ -17,7 +17,7 @@
 		<form action="/edit-student-group" method="post" class="mt-4">
 			<div class="mb-3">
         		<select name="group"  class="form-control" id="group">
-            		<option th:each="group : ${groups}" th:value="${group.id}" th:text="${group.name}"></option>
+            		<option th:each="group : ${groups}" th:value="${group.id}" th:text="${group.id != 0 ? group.name : 'No Group'}"></option>
         		</select>
 			</div>
 			<input type="hidden" name="studentId" th:value="${student.id}" />
