@@ -62,9 +62,14 @@ public class StudentService {
 		}
 
 	}
+	
+	public List<Student> findByGroupId(Long groupId) {
+		
+		return repository.findByGroupId(groupId);
+	}
 
 	private boolean isStudentValid(Student student) {
-		return student != null && student.getId() != null && student.getFirstName() != null
+		return student != null && student.getFirstName() != null
 				&& student.getLastName() != null;
 	}
 

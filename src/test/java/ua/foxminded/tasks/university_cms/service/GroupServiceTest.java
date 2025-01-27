@@ -95,5 +95,17 @@ class GroupServiceTest {
 		verify(groupCourseRepository, times(1)).findByCourseId(course.getId());
 		assertEquals(List.of(group), actual);
 	}
-
+	
+	@Test
+	void saveGroup_Valid_Value_CalledMethods() {
+		
+		String name = "New_Group_Name";
+		Group newGroup = new Group("New_Group_Name");
+		
+		when(groupRepository.save(any(Group.class))).thenReturn(newGroup);
+		
+		service.saveGroup(name);
+		
+		verify(groupRepository, times(1)).save(any(Group.class));
+	}
 }

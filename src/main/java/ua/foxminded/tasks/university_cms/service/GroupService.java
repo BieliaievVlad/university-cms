@@ -79,8 +79,15 @@ public class GroupService {
 		}
 		return groups;
 	}
+	
+	public void saveGroup(String groupName) {
+		
+		Group newGroup = new Group(groupName);
+		
+		groupRepository.save(newGroup);
+	}
 
 	private boolean isGroupValid(Group group) {
-		return group != null && group.getId() != null && group.getName() != null;
+		return group != null &&  group.getName() != null;
 	}
 }

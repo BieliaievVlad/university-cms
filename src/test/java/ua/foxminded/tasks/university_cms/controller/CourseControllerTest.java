@@ -21,12 +21,11 @@ import ua.foxminded.tasks.university_cms.entity.Group;
 import ua.foxminded.tasks.university_cms.entity.Teacher;
 import ua.foxminded.tasks.university_cms.entity.TeacherCourse;
 import ua.foxminded.tasks.university_cms.form.CourseFormData;
-import ua.foxminded.tasks.university_cms.form.CoursesData;
+import ua.foxminded.tasks.university_cms.form.CoursesFormData;
 import ua.foxminded.tasks.university_cms.form.EditGroupsFormData;
-import ua.foxminded.tasks.university_cms.service.CourseService;
 import ua.foxminded.tasks.university_cms.service.DataGeneratorService;
+import ua.foxminded.tasks.university_cms.service.FormService;
 import ua.foxminded.tasks.university_cms.service.GroupCourseService;
-import ua.foxminded.tasks.university_cms.service.GroupService;
 import ua.foxminded.tasks.university_cms.service.TeacherCourseService;
 import ua.foxminded.tasks.university_cms.service.TeacherService;
 
@@ -38,13 +37,10 @@ class CourseControllerTest {
 
 	@MockBean
 	DataGeneratorService dataService;
-	
+
 	@MockBean
-	CourseService courseService;
-	
-	@MockBean
-	GroupService groupService;
-	
+	FormService formService;
+
 	@MockBean
 	TeacherService teacherService;
 	
@@ -56,9 +52,9 @@ class CourseControllerTest {
 
 	@Test
 	@WithMockUser(username = "admin", roles = "ADMIN")
-	void showCourses_coursesPageRequest_returnsCoursesView() throws Exception {
+	void showCoursesForm_coursesPageRequest_returnsCoursesView() throws Exception {
 		
-		when(courseService.prepareCoursesData()).thenReturn(new CoursesData());
+		when(formService.prepareCoursesFormData()).thenReturn(new CoursesFormData());
 		mockMvc.perform(MockMvcRequestBuilders.get("/courses"))
 			   .andExpect(MockMvcResultMatchers.status().isOk())
 			   .andExpect(MockMvcResultMatchers.view().name("courses"));
@@ -80,7 +76,7 @@ class CourseControllerTest {
 		String courseName = "Course_name";
 		Long teacherId = 10L;
 
-		doNothing().when(courseService).saveCourse(courseName, teacherId);
+		doNothing().when(teacherCourseService).saveCourse(courseName, teacherId);
 		
         mockMvc.perform(MockMvcRequestBuilders.post("/add-course")
         									  .with(SecurityMockMvcRequestPostProcessors.csrf())
@@ -102,7 +98,7 @@ class CourseControllerTest {
 		List<Teacher> teachers = Collections.emptyList();
 		Map<Course, List<Group>> courseGroupsMap = Collections.emptyMap();
 		
-		when(courseService.prepareCourseFormData(id)).thenReturn(new CourseFormData(teacherCourse,
+		when(formService.prepareCourseFormData(id)).thenReturn(new CourseFormData(teacherCourse,
 																					groups,
 																					teachers,
 																					courseGroupsMap));
@@ -138,11 +134,11 @@ class CourseControllerTest {
 		Course course = new Course(1L, "Course_Name");
 		TeacherCourse teacherCourse = new TeacherCourse(teacher, course);
 
-		doNothing().when(courseService).updateTeacherCourse(teacherCourse);
+		doNothing().when(teacherCourseService).updateTeacherCourse(teacherCourse);
 		
     	mockMvc.perform(MockMvcRequestBuilders.post("/update-teacher")
-    			.with(SecurityMockMvcRequestPostProcessors.csrf())
-    			.flashAttr("teacherCourse", teacherCourse))
+    				.with(SecurityMockMvcRequestPostProcessors.csrf())
+    				.flashAttr("teacherCourse", teacherCourse))
  	   			.andExpect(MockMvcResultMatchers.status().is3xxRedirection())
  	   			.andExpect(MockMvcResultMatchers.header().string("Location", "/courses"));
     	
@@ -157,7 +153,7 @@ class CourseControllerTest {
 		Map<Long, List<Group>> courseGroupsMap = Collections.emptyMap();
 		List<Group> filteredGroups = Collections.emptyList();
 		
-		when(courseService.prepareEditGroupsFormData(id)).thenReturn(new EditGroupsFormData(course,
+		when(formService.prepareEditGroupsFormData(id)).thenReturn(new EditGroupsFormData(course,
 																							courseGroupsMap,
 																							filteredGroups));
 
@@ -173,7 +169,7 @@ class CourseControllerTest {
 		Long groupId = 1L;
 		Long courseId = 1L;
 
-		doNothing().when(courseService).updateGroups(groupId, courseId);
+		doNothing().when(groupCourseService).updateGroupCourse(groupId, courseId);
 		
     	mockMvc.perform(MockMvcRequestBuilders.post("/update-groups")
     			.with(SecurityMockMvcRequestPostProcessors.csrf())
@@ -187,14 +183,14 @@ class CourseControllerTest {
 	
 	@Test
 	@WithMockUser(username = "admin", roles = "ADMIN")
-	void deleteGroup() throws Exception {
+	void deleteGroupFromCourse_ValidInput_CalledMethodsAndRedirectsToCoursesPage() throws Exception {
 		
 		Long groupId = 1L;
 		Long courseId = 2L;
 
-		doNothing().when(courseService).deleteGroup(groupId, courseId);
+		doNothing().when(groupCourseService).deleteGroupCourse(groupId, courseId);
 		
-		mockMvc.perform(MockMvcRequestBuilders.get("/delete-group/{groupId}", groupId)
+		mockMvc.perform(MockMvcRequestBuilders.get("/delete-group-from-course/{groupId}", groupId)
 					.with(SecurityMockMvcRequestPostProcessors.csrf())
 					.param("courseId", String.valueOf(courseId)))
 	 	   			.andExpect(MockMvcResultMatchers.status().is3xxRedirection())
@@ -207,7 +203,7 @@ class CourseControllerTest {
 		
 		Long id = 10L;
 
-    	doNothing().when(courseService).deleteCourse(id);
+    	doNothing().when(teacherCourseService).deleteTeacherCourse(id);
     	
     	mockMvc.perform(MockMvcRequestBuilders.get("/delete-course/{id}", id))
         	   .andExpect(MockMvcResultMatchers.status().is3xxRedirection())

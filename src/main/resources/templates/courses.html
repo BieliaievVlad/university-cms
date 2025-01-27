@@ -24,7 +24,7 @@
 			<table class="table table-bordered">
 				<thead>
 					<tr>
-						<th>ID</th>
+						<th sec:authorize="hasAnyRole('ADMIN', 'STAFF')">ID</th>
 						<th>Course</th>
 						<th>Teacher</th>
 						<th>Groups</th>
@@ -34,7 +34,7 @@
 				<tbody>
 					<th:block th:each="teacherCourse : ${teacherCourses}">
 						<tr>
-							<td th:text="${teacherCourse.course.id}"></td>
+							<td sec:authorize="hasAnyRole('ADMIN', 'STAFF')" th:text="${teacherCourse.course.id}"></td>
 							<td th:text="${teacherCourse.course.name}"></td>
 							<td
 								th:text="${teacherCourse.teacher.id != 0 ? teacherCourse.teacher.firstName + ' ' + teacherCourse.teacher.lastName : 'N/A'}"></td>
