@@ -100,21 +100,39 @@ class StudentServiceTest {
 	}
 	
 	@Test
-	void updateStudent_ValidValue_CalledMethods() {
+	void updateStudentGroup_ValidValue_CalledMethods() {
 		
 		Long groupId = 0L;
 		Long studentId = 1L;
-		Group group = new Group(0L, "dummy", 0L);
+		Group group = new Group(1L, "Group_Name", 10L);
 		Student student = new Student("First_Name", "Last_Name");
 		
 		when(groupRepository.findById(groupId)).thenReturn(Optional.of(group));
 		when(repository.findById(studentId)).thenReturn(Optional.of(student));
 		when(repository.save(any(Student.class))).thenReturn(student);
 		
-		service.updateStudent(studentId, groupId);
+		service.updateStudentGroup(studentId, groupId);
 		
 		verify(groupRepository, times(1)).findById(groupId);
 		verify(repository, times(1)).findById(studentId);
+		verify(repository, times(1)).save(any(Student.class));
+	}
+	
+	@Test
+	void updateStudentName_ValidValue_CalledMethods() {
+		
+		Long id = 1L;
+		String firstName = "";
+		String lastName = "";
+		Student student = new Student("First_Name", "Last_Name");
+		student.setId(id);
+		
+		when(repository.findById(id)).thenReturn(Optional.of(student));
+		when(repository.save(any(Student.class))).thenReturn(student);
+		
+		service.updateStudentName(id, firstName, lastName);
+		
+		verify(repository, times(1)).findById(id);
 		verify(repository, times(1)).save(any(Student.class));
 	}
 

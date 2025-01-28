@@ -12,7 +12,7 @@
 	<div th:replace="~{layout :: navbar}"></div>
 
 	<div class="container mt-4">
-		<h1 class="text-center">Edit Student</h1>
+		<h1 class="text-center">Edit Student Group</h1>
 
 		<form action="/edit-student-group" method="post" class="mt-4">
 			<div class="mb-3">
@@ -25,9 +25,8 @@
 			<a href="/groups" class="btn btn-secondary">Cancel</a>
 		</form>
 		<div class="mt-3">
-			<a href="/" class="btn btn-primary">Back to Home</a>
+			<a href="javascript:history.back()" class="btn btn-primary">Back to Home</a>
 		</div>
-
 	</div>
 
 	<script src="/webjars/bootstrap/5.2.3/js/bootstrap.bundle.min.js"></script>

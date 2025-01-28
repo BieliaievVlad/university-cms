@@ -120,16 +120,48 @@ class StudentControllerTest {
 	
 	@Test
 	@WithMockUser(username = "admin", roles = "ADMIN")
-	void updateStudent_ValidInput_CalledMethodsAndRedirectToStudentsPage() throws Exception {
+	void updateStudentGroup_ValidInput_CalledMethodsAndRedirectToStudentsPage() throws Exception {
 
 		Long studentId = 1L;
 		Long groupId = 1L;
 		
-		doNothing().when(studentService).updateStudent(studentId, groupId);
+		doNothing().when(studentService).updateStudentGroup(studentId, groupId);
 		
     	mockMvc.perform(MockMvcRequestBuilders.post("/edit-student-group")
 				.with(SecurityMockMvcRequestPostProcessors.csrf())
 				.param("group", String.valueOf(groupId)))
+	   			.andExpect(MockMvcResultMatchers.status().is3xxRedirection())
+	   			.andExpect(MockMvcResultMatchers.header().string("Location", "/students"));
+	}
+	
+	@Test
+	@WithMockUser(username = "admin", roles = "ADMIN")
+	void showEditStudentNameForm_EditStudentNamePageRequest_ReturnsEditStudentNameView() throws Exception {
+		
+		Long id = 1L;
+		Student student = new Student("First_Name", "Last_Name");
+		
+		when(studentService.findById(id)).thenReturn(student);
+		
+		mockMvc.perform(MockMvcRequestBuilders.get("/edit-student-name/{id}", id))
+               .andExpect(MockMvcResultMatchers.status().isOk())
+               .andExpect(MockMvcResultMatchers.view().name("edit-student-name"));
+	}
+	
+	@Test
+	@WithMockUser(username = "admin", roles = "ADMIN")
+	void updateStudentName_ValidInput_CalledMethodsAndRedirectToStudentsPage() throws Exception {
+		
+		Long id = 1L;
+		String firstName = "";
+		String lastName = "";
+		
+		doNothing().when(studentService).updateStudentName(id, firstName, lastName);
+		
+    	mockMvc.perform(MockMvcRequestBuilders.post("/edit-student-name/{id}", id)
+				.with(SecurityMockMvcRequestPostProcessors.csrf())
+				.param("firstName", firstName)
+				.param("lastName", lastName))			
 	   			.andExpect(MockMvcResultMatchers.status().is3xxRedirection())
 	   			.andExpect(MockMvcResultMatchers.header().string("Location", "/students"));
 	}

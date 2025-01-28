@@ -90,9 +90,29 @@ public class StudentController {
     
 	@PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     @PostMapping("/edit-student-group")
-	public String updateStudent(Long studentId, @RequestParam("group") Long groupId) {
+	public String updateStudentGroup(Long studentId, @RequestParam("group") Long groupId) {
 
-		studentService.updateStudent(studentId, groupId);
+		studentService.updateStudentGroup(studentId, groupId);
+		
+		return "redirect:/students";
+	}
+	
+	@PreAuthorize("hasAnyRole('ADMIN')")
+	@GetMapping("/edit-student-name/{id}")
+	public String showEditStudentNameForm(@PathVariable Long id, Model model) {
+		
+		Student student = studentService.findById(id);
+		
+		model.addAttribute("student", student);
+		
+		return "edit-student-name";
+	}
+	
+	@PreAuthorize("hasAnyRole('ADMIN')")
+    @PostMapping("/edit-student-name/{id}")
+	public String updateStudentName(@PathVariable Long id, @RequestParam("firstName") String firstName, @RequestParam("lastName") String lastName) {
+		
+		studentService.updateStudentName(id, firstName, lastName);
 		
 		return "redirect:/students";
 	}

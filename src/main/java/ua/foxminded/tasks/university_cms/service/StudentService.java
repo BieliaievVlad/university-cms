@@ -78,13 +78,22 @@ public class StudentService {
 		save(newStudent);
 	}
 	
-	public void updateStudent(Long studentId, Long groupId) {
+	public void updateStudentGroup(Long studentId, Long groupId) {
 		
 		Group group = groupService.findById(groupId);
 		Student student = findById(studentId);
 
 		student.setGroup(group);
 
+		save(student);
+	}
+	
+	public void updateStudentName(Long id, String firstName, String lastName) {
+		
+		Student student = findById(id);
+		student.setFirstName(firstName);
+		student.setLastName(lastName);
+		
 		save(student);
 	}
 
