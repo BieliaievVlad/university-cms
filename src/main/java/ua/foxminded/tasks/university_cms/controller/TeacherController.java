@@ -10,19 +10,30 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import ua.foxminded.tasks.university_cms.entity.Teacher;
+import ua.foxminded.tasks.university_cms.form.TeachersFormData;
+import ua.foxminded.tasks.university_cms.service.FormService;
 import ua.foxminded.tasks.university_cms.service.TeacherService;
 
 @Controller
 public class TeacherController {
 	
+	private final FormService formService;
+	private final TeacherService teacherService;
+	
 	@Autowired
-	TeacherService service;
+	public TeacherController(FormService formService, TeacherService teacherService) {
+		this.formService = formService;
+		this.teacherService = teacherService;
+	}
 	
 	@PreAuthorize("hasAnyRole('ADMIN', 'STAFF', 'TEACHER', 'STUDENT')")
 	@GetMapping("/teachers")
-	public String showTeachers(Model model) {
-		List<Teacher> teachers = service.findAll();
-		model.addAttribute("teachers", teachers);
+	public String showTeachersForm(Model model) {
+		
+		TeachersFormData data = formService.prepareTeachersFormData();
+		
+		model.addAttribute("teachers", data.getTeachers());
+		model.addAttribute("teacherCoursesMap", data.getTeacherCoursesMap());
 		return "teachers";
 		
 	}

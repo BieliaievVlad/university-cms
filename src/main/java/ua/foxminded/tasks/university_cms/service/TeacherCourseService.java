@@ -111,4 +111,9 @@ public class TeacherCourseService {
 		
 		return repository.findByCourseId(courseId);
 	}
+	
+	public List<TeacherCourse> findByTeacherId(Long teacherId) {
+		
+		return repository.findByTeacherId(teacherId);
+	}
 }
