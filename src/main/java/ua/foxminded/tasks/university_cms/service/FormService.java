@@ -154,6 +154,11 @@ public class FormService {
 		TeachersFormData data = new TeachersFormData();
 		
 		List<Teacher> teachers = teacherService.findAll();
+		
+		teachers = teachers.stream()
+				.sorted(Comparator.comparing(Teacher::getId))
+				.collect(Collectors.toList());
+		
 		data.setTeachers(teachers);
 		
 		Map<Teacher, List<TeacherCourse>> map = new HashMap<>();

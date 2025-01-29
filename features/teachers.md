@@ -9,7 +9,7 @@ Given User 'B' logged in with Staff role
 
 - User 'B' should be able assign/reassign teacher to course
 - User 'B' should be able list all teachers
-- User 'B' should be able read/update teacher information
+- User 'B' should be able read teacher information
 
 Given User 'C' logged in with Teacher or Student role
 

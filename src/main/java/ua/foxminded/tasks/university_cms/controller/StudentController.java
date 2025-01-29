@@ -110,7 +110,9 @@ public class StudentController {
 	
 	@PreAuthorize("hasAnyRole('ADMIN')")
     @PostMapping("/edit-student-name/{id}")
-	public String updateStudentName(@PathVariable Long id, @RequestParam("firstName") String firstName, @RequestParam("lastName") String lastName) {
+	public String updateStudentName(@PathVariable Long id, 
+									@RequestParam("firstName") String firstName, 
+									@RequestParam("lastName") String lastName) {
 		
 		studentService.updateStudentName(id, firstName, lastName);
 		

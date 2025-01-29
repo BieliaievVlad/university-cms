@@ -30,7 +30,7 @@
     		<div class="mb-3">
         		<label for="group" class="form-label">Group</label>
         		<select name="group"  class="form-control" id="group">
-            		<option th:each="group : ${filteredGroups}" th:value="${group.id}" th:text="${group.name}"></option>
+            		<option th:each="group : ${filteredGroups}" th:if="${group.id != 0}" th:value="${group.id}" th:text="${group.name}"></option>
         		</select>
     		</div>
     		        <input type="hidden" name="courseId" th:value="${course.id}" />
