@@ -1,5 +1,6 @@
 package ua.foxminded.tasks.university_cms.service;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import ua.foxminded.tasks.university_cms.entity.Course;
 import ua.foxminded.tasks.university_cms.entity.Group;
+import ua.foxminded.tasks.university_cms.entity.Student;
 import ua.foxminded.tasks.university_cms.entity.Teacher;
 import ua.foxminded.tasks.university_cms.entity.TeacherCourse;
 import ua.foxminded.tasks.university_cms.form.CourseFormData;
@@ -133,6 +135,17 @@ public class FormService {
 		data.setFilteredCourses(filteredCourses);
 		
 		return data;
+	}
+	
+	public List<Student> prepareStudentsFormData() {
+		
+		List<Student> students = studentService.findAll();
+		
+	    students = students.stream()
+                .sorted(Comparator.comparing(Student::getId))
+                .collect(Collectors.toList());
+	    
+	    return students;
 	}
 
 }

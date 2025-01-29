@@ -13,8 +13,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 
+import ua.foxminded.tasks.university_cms.entity.Group;
 import ua.foxminded.tasks.university_cms.entity.Student;
 import ua.foxminded.tasks.university_cms.entity.User;
+import ua.foxminded.tasks.university_cms.repository.GroupRepository;
 import ua.foxminded.tasks.university_cms.repository.StudentRepository;
 
 @SpringBootTest
@@ -23,6 +25,9 @@ class StudentServiceTest {
 
 	@MockBean
 	StudentRepository repository;
+	
+	@MockBean
+	GroupRepository groupRepository;
 
 	@Autowired
 	StudentService service;
@@ -74,6 +79,61 @@ class StudentServiceTest {
 		service.delete(id);
 
 		verify(repository, times(1)).delete(student);
+	}
+	
+	@Test
+	void addStudent_ValidValue_CalledMethods() {
+		
+		Long dummyGroupId = 0L;
+		String firstName = "First_Name";
+		String lastName = "Last_Name";
+		Group dummyGroup = new Group(0L, "dummy", 0L);
+		Student student = new Student("First_Name", "Last_Name");
+		
+		when(groupRepository.findById(dummyGroupId)).thenReturn(Optional.of(dummyGroup));
+		when(repository.save(any(Student.class))).thenReturn(student);
+		
+		service.addStudent(firstName, lastName);
+		
+		verify(groupRepository, times(1)).findById(dummyGroupId);
+		verify(repository, times(1)).save(any(Student.class));
+	}
+	
+	@Test
+	void updateStudentGroup_ValidValue_CalledMethods() {
+		
+		Long groupId = 0L;
+		Long studentId = 1L;
+		Group group = new Group(1L, "Group_Name", 10L);
+		Student student = new Student("First_Name", "Last_Name");
+		
+		when(groupRepository.findById(groupId)).thenReturn(Optional.of(group));
+		when(repository.findById(studentId)).thenReturn(Optional.of(student));
+		when(repository.save(any(Student.class))).thenReturn(student);
+		
+		service.updateStudentGroup(studentId, groupId);
+		
+		verify(groupRepository, times(1)).findById(groupId);
+		verify(repository, times(1)).findById(studentId);
+		verify(repository, times(1)).save(any(Student.class));
+	}
+	
+	@Test
+	void updateStudentName_ValidValue_CalledMethods() {
+		
+		Long id = 1L;
+		String firstName = "";
+		String lastName = "";
+		Student student = new Student("First_Name", "Last_Name");
+		student.setId(id);
+		
+		when(repository.findById(id)).thenReturn(Optional.of(student));
+		when(repository.save(any(Student.class))).thenReturn(student);
+		
+		service.updateStudentName(id, firstName, lastName);
+		
+		verify(repository, times(1)).findById(id);
+		verify(repository, times(1)).save(any(Student.class));
 	}
 
 }
