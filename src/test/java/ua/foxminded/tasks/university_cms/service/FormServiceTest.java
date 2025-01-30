@@ -25,6 +25,7 @@ import ua.foxminded.tasks.university_cms.form.CoursesFormData;
 import ua.foxminded.tasks.university_cms.form.EditCoursesFormData;
 import ua.foxminded.tasks.university_cms.form.EditGroupsFormData;
 import ua.foxminded.tasks.university_cms.form.GroupsFormData;
+import ua.foxminded.tasks.university_cms.form.TeachersFormData;
 import ua.foxminded.tasks.university_cms.repository.CourseRepository;
 import ua.foxminded.tasks.university_cms.repository.GroupCourseRepository;
 import ua.foxminded.tasks.university_cms.repository.GroupRepository;
@@ -201,5 +202,35 @@ class FormServiceTest {
 		
 		assertThat(actual).usingRecursiveComparison().isEqualTo(expectedSortedList);
 		verify(studentRepository, times(1)).findAll();
+	}
+	
+	@Test
+	void prepareTeachersFormData_ValidValue_CalledMethodsAndReturnsExpected() {
+		
+		Teacher teacher1 = new Teacher("First_Name1", "LastName1");
+		teacher1.setId(1L);
+		Teacher teacher2 = new Teacher("First_Name2", "LastName2");
+		teacher2.setId(2L);
+		Course course1 = new Course(1L, "Course_Name1");
+		Course course2 = new Course(2L, "Course_Name2");
+		TeacherCourse teacherCourse1 = new TeacherCourse(teacher1, course1);
+		TeacherCourse teacherCourse2 = new TeacherCourse(teacher2, course2);
+		Map<Teacher, List<TeacherCourse>> map = new HashMap<>();
+		map.put(teacher1, List.of(teacherCourse1));
+		map.put(teacher2, List.of(teacherCourse2));
+		TeachersFormData expected = new TeachersFormData();
+		expected.setTeachers(List.of(teacher1, teacher2));
+		expected.setTeacherCoursesMap(map);
+		
+		when(teacherRepository.findAll()).thenReturn(List.of(teacher2, teacher1));
+		when(teacherCourseRepository.findAll()).thenReturn(List.of(teacherCourse1, teacherCourse2));
+		when(teacherCourseRepository.findByTeacherId(anyLong())).thenReturn(List.of(teacherCourse1))
+																.thenReturn(List.of(teacherCourse2));
+		
+		TeachersFormData actual = formService.prepareTeachersFormData();
+		
+		assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
+		verify(teacherRepository, times(1)).findAll();
+		verify(teacherCourseRepository, times(2)).findByTeacherId(anyLong());
 	}
 }

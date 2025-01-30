@@ -98,8 +98,24 @@ class TeacherServiceTest {
 		
 		verify(teacherRepository, times(1)).findById(teacher.getId());
 		verify(teacherCourseRepository, times(1)).findByCourseId(course.getId());
-		assertEquals(teacher, actual);
+		assertEquals(teacher, actual);	
+	}
+	
+	@Test
+	void updateTeacherName_ValidValue_CalledMethods() {
 		
+		Long id = 1L;
+		String firstName = "First_Name";
+		String lastName = "Last_Name";
+		Teacher teacher = new Teacher("First_Name", "Last_Name");
+		
+		when(teacherRepository.findById(anyLong())).thenReturn(Optional.of(teacher));
+		when(teacherRepository.save(any(Teacher.class))).thenReturn(teacher);
+		
+		service.updateTeacherName(id, firstName, lastName);
+		
+		verify(teacherRepository, times(1)).findById(id);
+		verify(teacherRepository, times(1)).save(any(Teacher.class));
 	}
 
 }
