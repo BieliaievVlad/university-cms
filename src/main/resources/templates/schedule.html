@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Schedule</title>
+<link rel="stylesheet" href="/webjars/bootstrap/5.2.3/css/bootstrap.min.css">
+</head>
+<body>
+
+<div th:replace="~{layout :: navbar}"></div>
+
+<div class="container mt-4">
+    <h1 class="text-center">Schedule</h1>
+    
+        <div th:if="${error}" class="alert alert-danger" role="alert">
+       		 <span th:text="${error}"></span>
+    	</div>       
+        <div class="mb-3" sec:authorize="hasAnyRole('ADMIN', 'STAFF')">
+            <label for="id" class="form-label">ID</label>
+            <div class="mb-3">
+            	 <span th:text="${schedule.id}" style="font-size: 20px; font-weight: bold;"></span>
+            </div>          
+        </div>
+        
+        <div class="mb-3">
+            <label for="dateTime" class="form-label">Date</label>
+            <div class="mb-3">
+            	 <span th:text="${#temporals.format(schedule.dateTime, 'dd.MM.yyyy, HH:mm')}" style="font-size: 20px; font-weight: bold;"></span>
+            </div>          
+        </div>
+        
+        <div class="mb-3">
+            <label for="course" class="form-label">Course</label>
+            <div class="mb-3">
+            	 <span th:text="${schedule.course.id != 0 ? schedule.course.name : 'N/A'}" style="font-size: 20px; font-weight: bold;"></span>
+            </div>
+            <div class="mt-3" sec:authorize="hasAnyRole('ADMIN', 'STAFF')">
+				<a th:href="@{/edit-schedule-course/{id}(id=${schedule.id})}" class="btn btn-primary">Edit</a>
+			</div>
+        </div>
+        
+        <div class="mb-3">
+            <label for="group" class="form-label">Group</label>
+            <div class="mb-3">
+            	 <span th:text="${schedule.group.id != 0 ? schedule.group.name : 'N/A'}" style="font-size: 20px; font-weight: bold;"></span>
+            </div>
+            <div class="mt-3" sec:authorize="hasAnyRole('ADMIN', 'STAFF')">
+				<a th:href="@{/edit-schedule-group/{id}(id=${schedule.id})}" class="btn btn-primary">Edit</a>
+			</div>
+        </div>
+
+        <a href="/schedules" class="btn btn-secondary">Back</a>
+</div>
+
+<script src="/webjars/bootstrap/5.2.3/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import ua.foxminded.tasks.university_cms.entity.Group;
+import ua.foxminded.tasks.university_cms.entity.Schedule;
 import ua.foxminded.tasks.university_cms.entity.Student;
 import ua.foxminded.tasks.university_cms.service.FormService;
 import ua.foxminded.tasks.university_cms.service.GroupService;
@@ -45,8 +46,10 @@ public class StudentController {
 	public String showStudentForm(@PathVariable Long id, Model model) {
 		
 		Student student = studentService.findById(id);
+		List<Schedule> schedules = formService.prepareScheduleListForStudent(student);
 		
 		model.addAttribute("student", student);
+		model.addAttribute("schedules", schedules);
 		
 		return "student";
 	}
