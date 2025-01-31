@@ -18,6 +18,7 @@ import ua.foxminded.tasks.university_cms.form.CoursesFormData;
 import ua.foxminded.tasks.university_cms.form.EditCoursesFormData;
 import ua.foxminded.tasks.university_cms.form.EditGroupsFormData;
 import ua.foxminded.tasks.university_cms.form.GroupsFormData;
+import ua.foxminded.tasks.university_cms.form.TeachersFormData;
 
 @Service
 public class FormService {
@@ -146,6 +147,30 @@ public class FormService {
                 .collect(Collectors.toList());
 	    
 	    return students;
+	}
+	
+	public TeachersFormData prepareTeachersFormData() {
+		
+		TeachersFormData data = new TeachersFormData();
+		
+		List<Teacher> teachers = teacherService.findAll();
+		
+		teachers = teachers.stream()
+				.sorted(Comparator.comparing(Teacher::getId))
+				.collect(Collectors.toList());
+		
+		data.setTeachers(teachers);
+		
+		Map<Teacher, List<TeacherCourse>> map = new HashMap<>();
+		
+		for(Teacher t : teachers) {
+			
+			List<TeacherCourse> tcs = teacherCourseService.findByTeacherId(t.getId());
+			map.put(t, tcs);
+		}
+		data.setTeacherCoursesMap(map);
+		
+		return data;
 	}
 
 }

@@ -67,6 +67,14 @@ public class TeacherService {
 		}
 	}
 	
+	public void updateTeacherName(Long id, String firstName, String lastName) {
+
+		Teacher teacher = findById(id);
+		teacher.setFirstName(firstName);
+		teacher.setLastName(lastName);
+		save(teacher);
+	}
+	
 	public Teacher findByCourse(Course course) {
 		
 		Long courseId = course.getId();
@@ -93,7 +101,7 @@ public class TeacherService {
 	}
 
 	private boolean isTeacherValid(Teacher teacher) {
-		return teacher != null && teacher.getId() != null && teacher.getFirstName() != null
+		return teacher != null && teacher.getFirstName() != null
 				&& teacher.getLastName() != null;
 	}
 

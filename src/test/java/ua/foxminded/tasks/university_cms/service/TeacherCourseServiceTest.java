@@ -1,5 +1,6 @@
 package ua.foxminded.tasks.university_cms.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -173,6 +174,111 @@ class TeacherCourseServiceTest {
 		verify(groupCourseRepository, times(1)).delete(any(GroupCourse.class));
 		verify(teacherCourseRepository, times(1)).delete(any(TeacherCourse.class));
 		verify(courseRepository, times(1)).delete(any(Course.class));
+	}
+	
+	@Test
+	void deleteCourseFromTeacher_ValidValue_CalledMethods() {
+		
+		Long courseId = 1L;
+		Course course = new Course(1L, "Course_Name");
+		Teacher teacher = new Teacher(1L, "First_Name", "Last_Name");
+		TeacherCourse teacherCourse = new TeacherCourse(teacher, course);
+		
+		when(courseRepository.findById(anyLong())).thenReturn(Optional.of(course));
+		when(teacherCourseRepository.findByCourseId(anyLong())).thenReturn(teacherCourse);
+		when(teacherCourseRepository.findById(any())).thenReturn(Optional.of(teacherCourse))
+													 .thenReturn(Optional.empty());
+		doNothing().when(teacherCourseRepository).delete(any(TeacherCourse.class));
+		when(teacherCourseRepository.save(any(TeacherCourse.class))).thenReturn(teacherCourse);
+		
+		service.deleteCourseFromTeacher(courseId);
+		
+		verify(courseRepository, times(1)).findById(anyLong());
+		verify(teacherCourseRepository, times(1)).findByCourseId(anyLong());
+		verify(teacherCourseRepository, times(2)).findById(any());
+		verify(teacherCourseRepository, times(1)).delete(any(TeacherCourse.class));
+		verify(teacherCourseRepository, times(1)).save(any(TeacherCourse.class));
+	}
+	
+	@Test
+	void addCourseToTeacher_ValidValue_CalledMethods() {
+		
+		Long courseId = 1L;
+		Long teacherId = 1L;
+		Teacher teacher = new Teacher(1L, "First_Name", "Last_Name");
+		Course course = new Course(1L, "Course_Name");
+		TeacherCourse teacherCourse = new TeacherCourse(teacher, course);
+		
+		when(teacherRepository.findById(anyLong())).thenReturn(Optional.of(teacher));
+		when(courseRepository.findById(anyLong())).thenReturn(Optional.of(course));
+		when(teacherCourseRepository.findByCourseId(anyLong())).thenReturn(teacherCourse);
+		when(teacherCourseRepository.findById(any())).thenReturn(Optional.of(teacherCourse))
+		 											 .thenReturn(Optional.empty());
+		doNothing().when(teacherCourseRepository).delete(any(TeacherCourse.class));
+		when(teacherCourseRepository.save(any(TeacherCourse.class))).thenReturn(teacherCourse);
+		
+		service.addCourseToTeacher(teacherId, courseId);
+		
+		verify(teacherRepository, times(1)).findById(anyLong());
+		verify(courseRepository, times(1)).findById(anyLong());
+		verify(teacherCourseRepository, times(1)).findByCourseId(anyLong());
+		verify(teacherCourseRepository, times(2)).findById(any());
+		verify(teacherCourseRepository, times(1)).delete(any(TeacherCourse.class));
+		verify(teacherCourseRepository, times(1)).save(any(TeacherCourse.class));
+	}
+	
+	@Test
+	void deleteTeacherAndAssociations_ValidValue_CalledMethods() {
+
+		Long teacherId = 1L;
+		Teacher teacher = new Teacher(1L, "First_Name", "Last_Name");
+		Course course = new Course(1L, "Course_Name");
+		TeacherCourse teacherCourse = new TeacherCourse(teacher, course);
+		
+		when(teacherCourseRepository.findByTeacherId(teacherId)).thenReturn(List.of(teacherCourse));
+		when(courseRepository.findById(anyLong())).thenReturn(Optional.of(course));
+		when(teacherCourseRepository.findByCourseId(anyLong())).thenReturn(teacherCourse);
+		when(teacherCourseRepository.findById(any())).thenReturn(Optional.of(teacherCourse))
+													 .thenReturn(Optional.empty());
+		doNothing().when(teacherCourseRepository).delete(any(TeacherCourse.class));
+		when(teacherCourseRepository.save(any(TeacherCourse.class))).thenReturn(teacherCourse);
+		when(teacherRepository.findById(anyLong())).thenReturn(Optional.of(teacher));
+		doNothing().when(teacherRepository).delete(any(Teacher.class));
+		
+		service.deleteTeacherAndAssociations(teacherId);
+		
+		verify(teacherCourseRepository, times(1)).findByTeacherId(anyLong());
+		verify(courseRepository, times(1)).findById(anyLong());
+		verify(teacherCourseRepository, times(1)).findByCourseId(anyLong());
+		verify(teacherCourseRepository, times(2)).findById(any());
+		verify(teacherCourseRepository, times(1)).delete(any(TeacherCourse.class));
+		verify(teacherCourseRepository, times(1)).save(any(TeacherCourse.class));
+		verify(teacherRepository, times(1)).findById(anyLong());
+		verify(teacherRepository, times(1)).delete(any(Teacher.class));
+	}
+	
+	@Test
+	void prepareFilteredCoursesList_ValidValue_CalledMethodsAndReturnsExpected() {
+		
+		Long teacherId = 1L;
+		Teacher teacher1 = new Teacher(1L, "First_Name1", "Last_Name1");
+		Course course1 = new Course(1L, "Course_Name1");
+		Teacher teacher2 = new Teacher(2L, "First_Name2", "Last_Name2");
+		Course course2 = new Course(2L, "Course_Name2");
+		TeacherCourse teacherCourse1 = new TeacherCourse(teacher1, course1);
+		TeacherCourse teacherCourse2 = new TeacherCourse(teacher2, course2);
+		List<TeacherCourse> expected = List.of(teacherCourse2);
+		
+		when(teacherCourseRepository.findAll()).thenReturn(List.of(teacherCourse1, teacherCourse2));
+		when(teacherCourseRepository.findByTeacherId(anyLong())).thenReturn(List.of(teacherCourse1));
+		
+		List<TeacherCourse> actual = service.prepareFilteredCoursesList(teacherId);
+		
+		assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
+		verify(teacherCourseRepository, times(1)).findAll();
+		verify(teacherCourseRepository, times(1)).findByTeacherId(anyLong());
+		
+		
 	}
 
 }

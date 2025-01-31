@@ -9,7 +9,7 @@ Given User 'B' logged in with Staff role
 
 - User 'B' should be able assign/reassign student to group
 - User 'B' should be able list all students
-- User 'B' should be able read/update student information
+- User 'B' should be able read student information
 
 Given User 'C' logged in with Teacher or Student role
 

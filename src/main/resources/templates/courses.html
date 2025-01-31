@@ -32,7 +32,7 @@
 					</tr>
 				</thead>
 				<tbody>
-					<th:block th:each="teacherCourse : ${teacherCourses}">
+					<th:block th:each="teacherCourse : ${teacherCourses}" th:if="${teacherCourse.course.id != 0}">
 						<tr>
 							<td sec:authorize="hasAnyRole('ADMIN', 'STAFF')" th:text="${teacherCourse.course.id}"></td>
 							<td th:text="${teacherCourse.course.name}"></td>
