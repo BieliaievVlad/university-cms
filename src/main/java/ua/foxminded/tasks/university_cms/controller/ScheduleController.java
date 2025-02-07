@@ -15,7 +15,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import ua.foxminded.tasks.university_cms.entity.Course;
 import ua.foxminded.tasks.university_cms.entity.Group;
 import ua.foxminded.tasks.university_cms.entity.Schedule;
+import ua.foxminded.tasks.university_cms.form.SchedulesFormData;
+import ua.foxminded.tasks.university_cms.service.CourseService;
 import ua.foxminded.tasks.university_cms.service.FormService;
+import ua.foxminded.tasks.university_cms.service.GroupService;
 import ua.foxminded.tasks.university_cms.service.ScheduleService;
 
 @Controller
@@ -23,19 +26,40 @@ public class ScheduleController {
 	
 	private final ScheduleService scheduleService;
 	private final FormService formService;
+	private final GroupService groupService;
+	private final CourseService courseService;
+;
 	
 	@Autowired
-	public ScheduleController(ScheduleService scheduleService, FormService formService) {
+	public ScheduleController(ScheduleService scheduleService, FormService formService, 
+							  GroupService groupService, CourseService courseService) {
 		this.scheduleService = scheduleService;
 		this.formService = formService;
+		this.groupService = groupService;
+		this.courseService = courseService;
 	}
 	
 	@PreAuthorize("hasAnyRole('ADMIN', 'STAFF', 'TEACHER', 'STUDENT')")
 	@GetMapping("/schedules")
-	public String showSchedulesForm(Model model) {
+	public String showSchedulesForm(@RequestParam(value = "date", required = false) String date,
+            						@RequestParam(value = "course", required = false) Long courseId,
+            						@RequestParam(value = "group", required = false) Long groupId,
+            						@RequestParam(value = "teacher", required = false) Long teacherId,
+            						@RequestParam(value = "student", required = false) Long studentId,
+            						Model model) {
 		
-		List<Schedule> schedules = scheduleService.findAll();
+        List<Schedule> schedules = scheduleService.filterSchedules(date, courseId, groupId, teacherId, studentId);
+        SchedulesFormData data = formService.prepareSchedulesForm();
 		
+        model.addAttribute("date", date);
+        model.addAttribute("course", courseId);
+        model.addAttribute("group", groupId);
+        model.addAttribute("teacher", teacherId);
+        model.addAttribute("student", studentId);
+        model.addAttribute("teachers", data.getTeachers());
+        model.addAttribute("students", data.getStudents());
+        model.addAttribute("courses", data.getCourses());
+        model.addAttribute("groups", data.getGroups());
 		model.addAttribute("schedules", schedules);
 		
 		return "schedules";
@@ -55,14 +79,23 @@ public class ScheduleController {
 	@PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
 	@GetMapping("/add-schedule")
 	public String showAddScheduleForm(Model model) {
+		
+        List<Course> courses = courseService.findAll();
+        List<Group> groups = groupService.findAll();
+        
+        model.addAttribute("groups", groups);
+        model.addAttribute("courses", courses);
+        
 		return "add-schedule";
 	}
 	
 	@PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
 	@PostMapping("/add-schedule")
-	public String addSchedule(@RequestParam LocalDateTime dateTime) {
+	public String addSchedule(@RequestParam LocalDateTime dateTime, 
+							  @RequestParam Long courseId, 
+							  @RequestParam Long groupId) {
 
-		scheduleService.addSchedule(dateTime);
+		scheduleService.addSchedule(dateTime, courseId, groupId);
 		
 		return "redirect:/schedules";
 	}

@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.test.context.ActiveProfiles;
 
 import ua.foxminded.tasks.university_cms.entity.Course;
@@ -21,6 +22,7 @@ import ua.foxminded.tasks.university_cms.entity.Schedule;
 import ua.foxminded.tasks.university_cms.repository.CourseRepository;
 import ua.foxminded.tasks.university_cms.repository.GroupRepository;
 import ua.foxminded.tasks.university_cms.repository.ScheduleRepository;
+import ua.foxminded.tasks.university_cms.specification.ScheduleSpecification;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -131,10 +133,14 @@ class ScheduleServiceTest {
 		Group group = new Group(1L, "Group_Name1");
 		Schedule schedule = new Schedule(1L, dateTime, group, course);
 		
+		when(courseRepository.findById(anyLong())).thenReturn(Optional.of(course));
+		when(groupRepository.findById(anyLong())).thenReturn(Optional.of(group));
 		when(repository.save(any(Schedule.class))).thenReturn(schedule);
 		
-		service.addSchedule(dateTime);
+		service.addSchedule(dateTime, course.getId(), group.getId());
 		
+		verify(courseRepository, times(1)).findById(anyLong());
+		verify(groupRepository, times(1)).findById(anyLong());
 		verify(repository, times(1)).save(any(Schedule.class));
 	}
 	
@@ -179,5 +185,28 @@ class ScheduleServiceTest {
 		verify(groupRepository, times(1)).findById(anyLong());
 		verify(repository, times(1)).save(any(Schedule.class));
 	}
+	
+    @Test
+    void filterSchedules_ValidValue_CalledMethodsAndReturnsExpected() {
+    	
+    	Long courseId = 1L;
+    	Long groupId = 1L;
+    	Long teacherId = 1L;
+    	Long studentId = 1L;
+    	String date = "2025-02-07";
+		LocalDateTime dateTime = LocalDateTime.of(2024, 1, 31, 15, 30);
+		Course course = new Course(1L, "Course_name1");
+		Group group = new Group(1L, "Group_Name1");
+		Schedule schedule = new Schedule(1L, dateTime, group, course);
+
+        List<Schedule> expected = List.of(schedule);
+
+        when(repository.findAll(any(Specification.class))).thenReturn(expected);
+
+        List<Schedule> actual = service.filterSchedules(date, courseId, groupId, teacherId, studentId);
+
+		assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
+        verify(repository, times(1)).findAll(any(Specification.class));
+    }
 
 }

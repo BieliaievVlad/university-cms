@@ -1,5 +1,6 @@
 package ua.foxminded.tasks.university_cms.service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -8,6 +9,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -15,6 +17,7 @@ import ua.foxminded.tasks.university_cms.entity.Course;
 import ua.foxminded.tasks.university_cms.entity.Group;
 import ua.foxminded.tasks.university_cms.entity.Schedule;
 import ua.foxminded.tasks.university_cms.repository.ScheduleRepository;
+import ua.foxminded.tasks.university_cms.specification.ScheduleSpecification;
 
 @Service
 public class ScheduleService {
@@ -67,12 +70,15 @@ public class ScheduleService {
 		}
 	}
 	
-	public void addSchedule(LocalDateTime dateTime) {
+	public void addSchedule(LocalDateTime dateTime, Long courseId, Long groupId) {
 				
 		Schedule schedule = new Schedule();
+		Course course = courseService.findById(courseId);
+		Group group = groupService.findById(groupId);
+		
 		schedule.setDateTime(dateTime);
-		schedule.setCourse(new Course(0L, "dummy"));
-		schedule.setGroup(new Group(0L, "dummy"));
+		schedule.setCourse(course);
+		schedule.setGroup(group);
 		
 		save(schedule);
 	}
@@ -108,6 +114,21 @@ public class ScheduleService {
 		
 		return filteredSchedules;
 	}
+	
+    public List<Schedule> filterSchedules(String date, Long courseId, Long groupId, Long teacherId, Long studentId) {
+        LocalDate dateTime = null;
+        if (date != null && !date.isEmpty()) {
+            dateTime = LocalDate.parse(date);
+        }
+
+        Specification<Schedule> specification = Specification.where(ScheduleSpecification.filterByCourseId(courseId))
+                											   .and(ScheduleSpecification.filterByGroupId(groupId))
+                											   .and(ScheduleSpecification.filterByTeacherId(teacherId))
+                											   .and(ScheduleSpecification.filterByStudentId(studentId))
+                											   .and(ScheduleSpecification.filterByDate(dateTime));
+
+        return repository.findAll(specification);
+    }
 
 	private boolean isSсheduleValid(Schedule schedule) {
 		return schedule != null && schedule.getDateTime() != null &&

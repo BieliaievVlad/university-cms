@@ -18,8 +18,11 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ua.foxminded.tasks.university_cms.entity.Course;
 import ua.foxminded.tasks.university_cms.entity.Group;
 import ua.foxminded.tasks.university_cms.entity.Schedule;
+import ua.foxminded.tasks.university_cms.form.SchedulesFormData;
+import ua.foxminded.tasks.university_cms.service.CourseService;
 import ua.foxminded.tasks.university_cms.service.DataGeneratorService;
 import ua.foxminded.tasks.university_cms.service.FormService;
+import ua.foxminded.tasks.university_cms.service.GroupService;
 import ua.foxminded.tasks.university_cms.service.ScheduleService;
 
 @WebMvcTest(ScheduleController.class)
@@ -35,6 +38,12 @@ class ScheduleControllerTest {
 	FormService formService;
 	
 	@MockBean
+	GroupService groupService;
+	
+	@MockBean
+	CourseService courseService;
+	
+	@MockBean
 	ScheduleService scheduleService;
 
 	@Test
@@ -46,7 +55,8 @@ class ScheduleControllerTest {
 		Group group = new Group(1L, "Group_Name");
 		Schedule schedule = new Schedule(1L, dateTime, group, course);
 		
-		when(scheduleService.findAll()).thenReturn(List.of(schedule));
+		when(formService.prepareSchedulesForm()).thenReturn(new SchedulesFormData());
+		when(scheduleService.filterSchedules(anyString(), anyLong(), anyLong(), anyLong(), anyLong())).thenReturn(List.of(schedule));
 		
 		mockMvc.perform(MockMvcRequestBuilders.get("/schedules"))
 				.andExpect(MockMvcResultMatchers.status().isOk())
@@ -84,12 +94,16 @@ class ScheduleControllerTest {
 	void addSchedule_ValidInput_CallMethodsAndRedirectsToSchedulesPage() throws Exception {
 		
 		LocalDateTime dateTime = LocalDateTime.of(2024, 1, 31, 15, 30);
+		Long courseId = 1L;
+		Long groupId = 1L;
 		
 		doNothing().when(scheduleService).save(any(Schedule.class));
 		
         mockMvc.perform(MockMvcRequestBuilders.post("/add-schedule")
 				  							  .with(SecurityMockMvcRequestPostProcessors.csrf())
-				  							  .param("dateTime", dateTime.toString()))
+				  							  .param("dateTime", dateTime.toString())
+				  							  .param("courseId", String.valueOf(courseId))
+				  							  .param("groupId", String.valueOf(groupId)))
         		.andExpect(MockMvcResultMatchers.status().is3xxRedirection())
         		.andExpect(MockMvcResultMatchers.header().string("Location", "/schedules"));
 	}

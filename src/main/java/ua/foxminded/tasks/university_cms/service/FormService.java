@@ -20,6 +20,7 @@ import ua.foxminded.tasks.university_cms.form.CoursesFormData;
 import ua.foxminded.tasks.university_cms.form.EditCoursesFormData;
 import ua.foxminded.tasks.university_cms.form.EditGroupsFormData;
 import ua.foxminded.tasks.university_cms.form.GroupsFormData;
+import ua.foxminded.tasks.university_cms.form.SchedulesFormData;
 import ua.foxminded.tasks.university_cms.form.TeachersFormData;
 
 @Service
@@ -175,6 +176,16 @@ public class FormService {
 		data.setTeacherCoursesMap(map);
 		
 		return data;
+	}
+	
+	public SchedulesFormData prepareSchedulesForm() {
+		
+        List<Course> courses = courseService.findAll();
+        List<Group> groups = groupService.findAll();
+        List<Teacher> teachers = teacherService.findAll();
+        List<Student> students = studentService.findAll();
+        
+        return new SchedulesFormData(courses, groups, teachers, students);
 	}
 	
 	public List<Course> prepareEditScheduleCourseForm(Long id) {

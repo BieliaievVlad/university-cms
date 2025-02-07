@@ -27,6 +27,7 @@ import ua.foxminded.tasks.university_cms.form.CoursesFormData;
 import ua.foxminded.tasks.university_cms.form.EditCoursesFormData;
 import ua.foxminded.tasks.university_cms.form.EditGroupsFormData;
 import ua.foxminded.tasks.university_cms.form.GroupsFormData;
+import ua.foxminded.tasks.university_cms.form.SchedulesFormData;
 import ua.foxminded.tasks.university_cms.form.TeachersFormData;
 import ua.foxminded.tasks.university_cms.repository.CourseRepository;
 import ua.foxminded.tasks.university_cms.repository.GroupCourseRepository;
@@ -238,6 +239,29 @@ class FormServiceTest {
 		assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
 		verify(teacherRepository, times(1)).findAll();
 		verify(teacherCourseRepository, times(2)).findByTeacherId(anyLong());
+	}
+	
+	@Test
+	void prepareSchedulesFormData_ValidValue_CalledMethodsAndReturnsExpected() {
+
+		List<Course> courses = List.of(new Course(1L, "Course_Name"));
+		List<Group> groups = List.of(new Group(1L, "Group_Name", 10L));
+		List<Teacher> teachers = List.of(new Teacher("First_Name", "LastName"));
+		List<Student> students = List.of(new Student("First_Name", "Last_Name"));
+		SchedulesFormData expected = new SchedulesFormData(courses, groups, teachers, students);
+		
+		when(courseRepository.findAll()).thenReturn(courses);
+		when(groupRepository.findAll()).thenReturn(groups);
+		when(teacherRepository.findAll()).thenReturn(teachers);
+		when(studentRepository.findAll()).thenReturn(students);
+		
+		SchedulesFormData actual = formService.prepareSchedulesForm();
+		
+		assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
+		verify(courseRepository, times(1)).findAll();
+		verify(groupRepository, times(1)).findAll();
+		verify(teacherRepository, times(1)).findAll();
+		verify(studentRepository, times(1)).findAll();
 	}
 	
 	@Test
