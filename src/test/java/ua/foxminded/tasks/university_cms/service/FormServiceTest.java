@@ -3,6 +3,7 @@ package ua.foxminded.tasks.university_cms.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -36,6 +37,7 @@ import ua.foxminded.tasks.university_cms.repository.ScheduleRepository;
 import ua.foxminded.tasks.university_cms.repository.StudentRepository;
 import ua.foxminded.tasks.university_cms.repository.TeacherCourseRepository;
 import ua.foxminded.tasks.university_cms.repository.TeacherRepository;
+import ua.foxminded.tasks.university_cms.util.DateUtil;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -61,6 +63,9 @@ class FormServiceTest {
 	
 	@MockBean
 	GroupCourseRepository groupCourseRepository;
+	
+	@MockBean
+	DateUtil dateUtil;
 	
 	@Autowired 
 	FormService formService;
@@ -265,32 +270,6 @@ class FormServiceTest {
 	}
 	
 	@Test
-	void prepareScheduleListForTeacher_ValidValue_CalledMethodsAndReturnsExpected() {
-		
-		LocalDateTime dateTime1 = LocalDateTime.of(2024, 1, 31, 15, 30);
-		Course course1 = new Course(1L, "Course_name1");
-		Group group1 = new Group(1L, "Group_Name1");
-		Schedule schedule1 = new Schedule(1L, dateTime1, group1, course1);
-		
-		LocalDateTime dateTime2 = LocalDateTime.of(2025, 1, 31, 15, 30);
-		Course course2 = new Course(2L, "Course_name2");
-		Group group2 = new Group(2L, "Group_Name2");
-		Teacher teacher2 = new Teacher("First_Name", "Last_Name");
-		teacher2.setId(1L);
-		Schedule schedule2 = new Schedule(2L, dateTime2, group2, course2);
-		
-		List<TeacherCourse> list = List.of(new TeacherCourse(teacher2, course2));
-		List<Schedule> expected = List.of(schedule2);
-		
-		when(scheduleRepository.findAll()).thenReturn(List.of(schedule1, schedule2));
-		
-		List<Schedule> actual = formService.prepareScheduleListForTeacher(list);
-		
-		assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
-		verify(scheduleRepository, times(1)).findAll();
-	}
-	
-	@Test
 	void prepareEditScheduleCourseForm_ValidValue_CalledMethodsAndReturnsExpected() {
 		
 		Long id = 1L;
@@ -347,9 +326,12 @@ class FormServiceTest {
 		Student student = new Student("First_Name", "Last_name", group2);
 		student.setId(1L);
 		
+		List<LocalDate> dates = List.of(dateTime1.toLocalDate(), dateTime2.toLocalDate());
+		
 		List<Schedule> expected = List.of(schedule2);
 		
 		when(groupCourseRepository.findByGroupId(anyLong())).thenReturn(List.of(new GroupCourse(group2, course2)));
+		when(dateUtil.getDateList()).thenReturn(dates);
 		when(scheduleRepository.findAll()).thenReturn(List.of(schedule1, schedule2));
 		
 		List<Schedule> actual = formService.prepareScheduleListForStudent(student);
@@ -373,9 +355,41 @@ class FormServiceTest {
 		Schedule schedule2 = new Schedule(2L, dateTime2, group2, course2);
 		List<Schedule> expected = List.of(schedule2);
 		
+		List<LocalDate> dates = List.of(dateTime1.toLocalDate(), dateTime2.toLocalDate());
+		
 		when(scheduleRepository.findAll()).thenReturn(List.of(schedule1, schedule2));
+		when(dateUtil.getDateList()).thenReturn(dates);
 		
 		List<Schedule> actual = formService.prepareScheduleListForGroup(List.of(course2));
+		
+		assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
+		verify(scheduleRepository, times(1)).findAll();
+	}
+	
+	@Test
+	void prepareScheduleListForTeacher_ValidValue_CalledMethodsAndReturnsExpected() {
+		
+		LocalDateTime dateTime1 = LocalDateTime.of(2024, 1, 31, 15, 30);
+		Course course1 = new Course(1L, "Course_name1");
+		Group group1 = new Group(1L, "Group_Name1");
+		Schedule schedule1 = new Schedule(1L, dateTime1, group1, course1);
+		
+		LocalDateTime dateTime2 = LocalDateTime.of(2025, 1, 31, 15, 30);
+		Course course2 = new Course(2L, "Course_name2");
+		Group group2 = new Group(2L, "Group_Name2");
+		Teacher teacher2 = new Teacher("First_Name", "Last_Name");
+		teacher2.setId(1L);
+		Schedule schedule2 = new Schedule(2L, dateTime2, group2, course2);
+		
+		List<LocalDate> dates = List.of(dateTime1.toLocalDate(), dateTime2.toLocalDate());
+		
+		List<TeacherCourse> list = List.of(new TeacherCourse(teacher2, course2));
+		List<Schedule> expected = List.of(schedule2);
+		
+		when(scheduleRepository.findAll()).thenReturn(List.of(schedule1, schedule2));
+		when(dateUtil.getDateList()).thenReturn(dates);
+		
+		List<Schedule> actual = formService.prepareScheduleListForTeacher(list);
 		
 		assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
 		verify(scheduleRepository, times(1)).findAll();

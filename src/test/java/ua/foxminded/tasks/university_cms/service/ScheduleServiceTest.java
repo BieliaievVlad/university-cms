@@ -22,7 +22,6 @@ import ua.foxminded.tasks.university_cms.entity.Schedule;
 import ua.foxminded.tasks.university_cms.repository.CourseRepository;
 import ua.foxminded.tasks.university_cms.repository.GroupRepository;
 import ua.foxminded.tasks.university_cms.repository.ScheduleRepository;
-import ua.foxminded.tasks.university_cms.specification.ScheduleSpecification;
 
 @SpringBootTest
 @ActiveProfiles("test")
