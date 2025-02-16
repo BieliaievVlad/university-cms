@@ -18,6 +18,7 @@ import ua.foxminded.tasks.university_cms.entity.Group;
 import ua.foxminded.tasks.university_cms.entity.Schedule;
 import ua.foxminded.tasks.university_cms.repository.ScheduleRepository;
 import ua.foxminded.tasks.university_cms.specification.ScheduleSpecification;
+import ua.foxminded.tasks.university_cms.util.DateUtil;
 
 @Service
 public class ScheduleService {
@@ -25,12 +26,15 @@ public class ScheduleService {
 	private final ScheduleRepository repository;
 	private final GroupService groupService;
 	private final CourseService courseService;
+	private final DateUtil dateUtil;
 
 	@Autowired
-	public ScheduleService(ScheduleRepository repository, GroupService groupService, CourseService courseService) {
+	public ScheduleService(ScheduleRepository repository, GroupService groupService, 
+						   CourseService courseService, DateUtil dateUtil) {
 		this.repository = repository;
 		this.groupService = groupService;
 		this.courseService = courseService;
+		this.dateUtil = dateUtil;
 	}
 
 	public List<Schedule> findAll() {
@@ -128,6 +132,16 @@ public class ScheduleService {
                 											   .and(ScheduleSpecification.filterByDate(dateTime));
 
         return repository.findAll(specification);
+    }
+    
+    public List<Schedule> filterByWeek(List<Course> courses) {
+    	
+		List<Schedule> schedules = findByCourses(courses);
+		List<LocalDate> dates = dateUtil.getDateList();
+		
+		return schedules.stream()
+						.filter(schedule -> dates.contains(schedule.getDateTime().toLocalDate()))
+						.collect(Collectors.toList());
     }
 
 	private boolean isSсheduleValid(Schedule schedule) {

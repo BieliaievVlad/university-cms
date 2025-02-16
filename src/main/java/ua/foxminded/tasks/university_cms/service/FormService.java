@@ -218,19 +218,19 @@ public class FormService {
 			courses.add(tc.getCourse());
 		}
 		
-		return scheduleService.findByCourses(courses);
+		return scheduleService.filterByWeek(courses);
 	}
 	
 	public List<Schedule> prepareScheduleListForGroup(List<Course> courses) {
 		
-		return scheduleService.findByCourses(courses);
+		return scheduleService.filterByWeek(courses);
 	}
 	
 	public List<Schedule> prepareScheduleListForStudent(Student student) {
 		
 		List<Course> courses = groupCourseService.findByGroup(student.getGroup());
 		
-		return scheduleService.findByCourses(courses);
+		return scheduleService.filterByWeek(courses);
 	}
 
 }

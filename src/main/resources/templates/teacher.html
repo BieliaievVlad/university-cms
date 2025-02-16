@@ -50,6 +50,9 @@
         <div class="mb-3">
         	<label for="id" class="form-label">Schedule</label>
         	<div class="mb-3">
+        		<div th:if="${#lists.isEmpty(schedules)}">
+    				<p>No schedules available</p>
+				</div>
         		<th:block th:each="schedule : ${schedules}">
         			<li>
         				<span th:text="${#temporals.format(schedule.dateTime, 'dd.MM.yyyy, HH:mm') + ' ' + schedule.course.name}"></span>
