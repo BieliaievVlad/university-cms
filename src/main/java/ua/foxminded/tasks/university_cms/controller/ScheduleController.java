@@ -52,10 +52,10 @@ public class ScheduleController {
         SchedulesFormData data = formService.prepareSchedulesForm();
 		
         model.addAttribute("date", date);
-        model.addAttribute("course", courseId);
-        model.addAttribute("group", groupId);
-        model.addAttribute("teacher", teacherId);
-        model.addAttribute("student", studentId);
+        model.addAttribute("courseId", courseId);
+        model.addAttribute("groupId", groupId);
+        model.addAttribute("teacherId", teacherId);
+        model.addAttribute("studentId", studentId);
         model.addAttribute("teachers", data.getTeachers());
         model.addAttribute("students", data.getStudents());
         model.addAttribute("courses", data.getCourses());

@@ -20,16 +20,17 @@
             <div class="col-md-3">
                 <label for="date" class="form-label">Date</label>
                 <input type="date" id="date" name="date" class="form-control"
-                    th:value="${param.date}" />
+                    th:value="${date}" />
             </div>
             <div class="col-md-3">
                 <label for="course" class="form-label">Course</label>
                 <select id="course" name="course" class="form-control">
                     <option value="">Select Course</option>
                     <option th:each="course : ${courses}" 
+                    		th:if="${course.id != 0}"
                             th:value="${course.id}" 
                             th:text="${course.name}" 
-                            th:selected="${course.id == param.course}"></option>
+                            th:selected="${course.id == courseId}"></option>
                 </select>
             </div>
             <div class="col-md-3">
@@ -37,9 +38,10 @@
                 <select id="group" name="group" class="form-control">
                     <option value="">Select Group</option>
                     <option th:each="group : ${groups}" 
+                    		th:if="${group.id != 0}"
                             th:value="${group.id}" 
                             th:text="${group.name}" 
-                            th:selected="${group.id == param.group}"></option>
+                            th:selected="${group.id == groupId}"></option>
                 </select>
             </div>
             
@@ -48,9 +50,10 @@
                 <select id="teacher" name="teacher" class="form-control">
                     <option value="">Select Teacher</option>
                     <option th:each="teacher : ${teachers}" 
+                    		th:if="${teacher.id != 0}"
                             th:value="${teacher.id}" 
                             th:text="${teacher.firstName + ' ' + teacher.lastName}" 
-                            th:selected="${teacher.id == param.teacher}"></option>
+                            th:selected="${teacher.id == teacherId}"></option>
                 </select>
             </div> 
             
@@ -61,7 +64,7 @@
                     <option th:each="student : ${students}" 
                             th:value="${student.id}" 
                             th:text="${student.firstName + ' ' + student.lastName}" 
-                            th:selected="${student.id == param.student}"></option>
+                            th:selected="${student.id == studentId}"></option>
                 </select>
             </div>                       
             

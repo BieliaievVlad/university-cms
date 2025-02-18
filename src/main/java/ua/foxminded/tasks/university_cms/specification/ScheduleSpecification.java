@@ -32,7 +32,7 @@ public class ScheduleSpecification {
     public static Specification<Schedule> filterByDate(LocalDate date) {
         return (root, query, criteriaBuilder) -> {
             if (date != null) {
-                return criteriaBuilder.equal(criteriaBuilder.function("DATE", LocalDate.class, root.get("date")), date);
+                return criteriaBuilder.equal(criteriaBuilder.function("DATE", LocalDate.class, root.get("dateTime")), date);
             }
             return criteriaBuilder.conjunction();
         };
