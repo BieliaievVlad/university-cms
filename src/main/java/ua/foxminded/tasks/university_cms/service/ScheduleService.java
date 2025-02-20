@@ -70,8 +70,16 @@ public class ScheduleService {
 			repository.delete(optSсhedule.get());
 
 		} else {
-			throw new EntityNotFoundException("Shedule is not found.");
+			throw new EntityNotFoundException("Schedule is not found.");
 		}
+	}
+	
+	public List<Schedule> findByGroupId(Long groupId) {
+		return repository.findByGroupId(groupId);
+	}
+	
+	public List<Schedule> findByCourseId(Long courseId) {
+		return repository.findByCourseId(courseId);
 	}
 	
 	public void addSchedule(LocalDateTime dateTime, Long courseId, Long groupId) {

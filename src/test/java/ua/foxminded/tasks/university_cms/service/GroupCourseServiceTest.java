@@ -4,6 +4,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,10 +18,12 @@ import ua.foxminded.tasks.university_cms.entity.Course;
 import ua.foxminded.tasks.university_cms.entity.Group;
 import ua.foxminded.tasks.university_cms.entity.GroupCourse;
 import ua.foxminded.tasks.university_cms.entity.GroupCourseId;
+import ua.foxminded.tasks.university_cms.entity.Schedule;
 import ua.foxminded.tasks.university_cms.entity.Student;
 import ua.foxminded.tasks.university_cms.repository.CourseRepository;
 import ua.foxminded.tasks.university_cms.repository.GroupCourseRepository;
 import ua.foxminded.tasks.university_cms.repository.GroupRepository;
+import ua.foxminded.tasks.university_cms.repository.ScheduleRepository;
 import ua.foxminded.tasks.university_cms.repository.StudentRepository;
 
 @SpringBootTest
@@ -38,6 +41,9 @@ class GroupCourseServiceTest {
 	
 	@MockBean
 	GroupCourseRepository groupCourseRepository;
+	
+	@MockBean
+	ScheduleRepository scheduleRepository;
 
 	@Autowired
 	GroupCourseService service;
@@ -173,25 +179,34 @@ class GroupCourseServiceTest {
 		Course course = new Course(1L, "Course_Name");
 		Student student = new Student("First_Name", "Last_Name");
 		student.setId(1L);
+		LocalDateTime date = LocalDateTime.of(2024, 10, 10, 11, 30);
+		Schedule schedule = new Schedule(date, group, course);
+		schedule.setId(1L);
 		
 		when(groupCourseRepository.findByGroupId(id)).thenReturn(List.of(new GroupCourse(group, course)));
 		when(studentRepository.findByGroupId(id)).thenReturn(List.of(student));
+		when(scheduleRepository.findByGroupId(anyLong())).thenReturn(List.of(schedule));
 		when(groupCourseRepository.findById(any(GroupCourseId.class))).thenReturn(Optional.of(new GroupCourse(group, course)));
 		doNothing().when(groupCourseRepository).delete(any(GroupCourse.class));
 		when(studentRepository.findById(anyLong())).thenReturn(Optional.of(student));
 		when(groupRepository.findById(anyLong())).thenReturn(Optional.of(group));
+		when(scheduleRepository.findById(anyLong())).thenReturn(Optional.of(schedule));
 		when(studentRepository.save(any(Student.class))).thenReturn(student);
+		doNothing().when(scheduleRepository).delete(any(Schedule.class));
 		doNothing().when(groupRepository).delete(any(Group.class));
 		
 		service.deleteGroupAndAssociations(id);
 		
 		verify(groupCourseRepository, times(1)).findByGroupId(id);
 		verify(studentRepository, times(1)).findByGroupId(id);
+		verify(scheduleRepository, times(1)).findByGroupId(id);
 		verify(groupCourseRepository, times(1)).findById(any(GroupCourseId.class));
 		verify(groupCourseRepository, times(1)).delete(any(GroupCourse.class));
 		verify(studentRepository, times(1)).findById(anyLong());
 		verify(groupRepository, times(2)).findById(anyLong());
 		verify(studentRepository, times(1)).save(any(Student.class));
+		verify(scheduleRepository, times(1)).findById(anyLong());
+		verify(scheduleRepository, times(1)).delete(any(Schedule.class));
 		verify(groupRepository, times(1)).delete(any(Group.class));	
 	}
 
