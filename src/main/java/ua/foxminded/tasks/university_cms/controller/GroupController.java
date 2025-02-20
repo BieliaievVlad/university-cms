@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import ua.foxminded.tasks.university_cms.entity.Course;
 import ua.foxminded.tasks.university_cms.entity.Group;
+import ua.foxminded.tasks.university_cms.entity.Schedule;
 import ua.foxminded.tasks.university_cms.entity.Student;
 import ua.foxminded.tasks.university_cms.form.EditCoursesFormData;
 import ua.foxminded.tasks.university_cms.form.GroupsFormData;
@@ -56,10 +57,12 @@ public class GroupController {
 		Group group = groupService.findById(id);
 		List<Student> students = studentService.findByGroupId(id);
 		List<Course> courses = groupCourseService.findByGroup(group);
+		List<Schedule> schedules = formService.prepareScheduleListForGroup(courses);
 		
 		model.addAttribute("group", group);
 		model.addAttribute("students", students);
 		model.addAttribute("courses", courses);
+		model.addAttribute("schedules", schedules);
 		
 		return "group";
 	}

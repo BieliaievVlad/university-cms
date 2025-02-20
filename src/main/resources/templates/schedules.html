@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Schedules</title>
+<link rel="stylesheet"
+	href="/webjars/bootstrap/5.2.3/css/bootstrap.min.css">
+</head>
+<body>
+
+	<div th:replace="~{layout :: navbar}"></div>
+
+	<div class="container mt-4">
+
+		<h1 class="text-center">Schedules</h1>
+		
+	<form th:action="@{/schedules}" method="get">
+        <div class="row">
+            <div class="col-md-3">
+                <label for="date" class="form-label">Date</label>
+                <input type="date" id="date" name="date" class="form-control"
+                    th:value="${date}" />
+            </div>
+            <div class="col-md-3">
+                <label for="course" class="form-label">Course</label>
+                <select id="course" name="course" class="form-control">
+                    <option value="">Select Course</option>
+                    <option th:each="course : ${courses}" 
+                    		th:if="${course.id != 0}"
+                            th:value="${course.id}" 
+                            th:text="${course.name}" 
+                            th:selected="${course.id == courseId}"></option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="group" class="form-label">Group</label>
+                <select id="group" name="group" class="form-control">
+                    <option value="">Select Group</option>
+                    <option th:each="group : ${groups}" 
+                    		th:if="${group.id != 0}"
+                            th:value="${group.id}" 
+                            th:text="${group.name}" 
+                            th:selected="${group.id == groupId}"></option>
+                </select>
+            </div>
+            
+            <div class="col-md-3">
+                <label for="teacher" class="form-label">Teacher</label>
+                <select id="teacher" name="teacher" class="form-control">
+                    <option value="">Select Teacher</option>
+                    <option th:each="teacher : ${teachers}" 
+                    		th:if="${teacher.id != 0}"
+                            th:value="${teacher.id}" 
+                            th:text="${teacher.firstName + ' ' + teacher.lastName}" 
+                            th:selected="${teacher.id == teacherId}"></option>
+                </select>
+            </div> 
+            
+            <div class="col-md-3">
+                <label for="student" class="form-label">Student</label>
+                <select id="student" name="student" class="form-control">
+                    <option value="">Select Student</option>
+                    <option th:each="student : ${students}" 
+                            th:value="${student.id}" 
+                            th:text="${student.firstName + ' ' + student.lastName}" 
+                            th:selected="${student.id == studentId}"></option>
+                </select>
+            </div>                       
+            
+        </div>
+        <div class="mt-3 text-center">
+            <button type="submit" class="btn btn-primary">Filter</button>
+        </div>
+    </form>
+
+		<div class="mt-3" sec:authorize="hasAnyRole('ADMIN', 'STAFF')">
+			<a href="/add-schedule" class="btn btn-primary">Add New</a>
+		</div>
+
+		<div class="mt-3">
+			<table class="table table-bordered">
+				<thead>
+					<tr>
+						<th sec:authorize="hasAnyRole('ADMIN', 'STAFF')">ID</th>
+						<th>Date</th>
+						<th>Course</th>
+						<th>Group</th>
+						<th>Actions</th>
+					</tr>
+				</thead>
+				<tbody>
+					<th:block th:each="schedule : ${schedules}">
+						<tr>
+							<td sec:authorize="hasAnyRole('ADMIN', 'STAFF')"
+								th:text="${schedule.id}"></td>
+							<td th:text="${#temporals.format(schedule.dateTime, 'dd.MM.yyyy, HH:mm')}"></td>
+							<td
+								th:text="${schedule.course.id != 0 ? schedule.course.name : 'N/A'}"></td>
+							<td
+								th:text="${schedule.group.id != 0 ? schedule.group.name : 'N/A'}"></td>
+							<td><a th:href="@{/schedule/{id}(id=${schedule.id})}"
+								class="btn btn-primary">Details</a> <a
+								sec:authorize="hasAnyRole('ADMIN', 'STAFF')"
+								th:href="@{/delete-schedule/{id}(id=${schedule.id})}"
+								class="btn btn-danger btn-sm">Delete</a></td>
+						</tr>
+					</th:block>
+				</tbody>
+			</table>
+		</div>
+
+		<div class="mt-3">
+			<a href="/" class="btn btn-primary">Back to Home</a>
+		</div>
+	</div>
+
+	<script src="/webjars/bootstrap/5.2.3/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

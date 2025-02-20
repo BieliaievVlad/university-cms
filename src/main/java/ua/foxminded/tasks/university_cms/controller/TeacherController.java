@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import ua.foxminded.tasks.university_cms.entity.Schedule;
 import ua.foxminded.tasks.university_cms.entity.Teacher;
 import ua.foxminded.tasks.university_cms.entity.TeacherCourse;
 import ua.foxminded.tasks.university_cms.form.TeachersFormData;
@@ -51,9 +52,11 @@ public class TeacherController {
 		
 		Teacher teacher = teacherService.findById(id);
 		List<TeacherCourse> teacherCourses = teacherCourseService.findByTeacherId(id);
+		List<Schedule> schedules = formService.prepareScheduleListForTeacher(teacherCourses);
 		
 		model.addAttribute("teacher", teacher);
 		model.addAttribute("teacherCourses", teacherCourses);
+		model.addAttribute("schedules", schedules);
 		
 		return "teacher";
 	}

@@ -1,5 +1,6 @@
 package ua.foxminded.tasks.university_cms.service;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import ua.foxminded.tasks.university_cms.entity.Course;
 import ua.foxminded.tasks.university_cms.entity.Group;
+import ua.foxminded.tasks.university_cms.entity.Schedule;
 import ua.foxminded.tasks.university_cms.entity.Student;
 import ua.foxminded.tasks.university_cms.entity.Teacher;
 import ua.foxminded.tasks.university_cms.entity.TeacherCourse;
@@ -18,6 +20,7 @@ import ua.foxminded.tasks.university_cms.form.CoursesFormData;
 import ua.foxminded.tasks.university_cms.form.EditCoursesFormData;
 import ua.foxminded.tasks.university_cms.form.EditGroupsFormData;
 import ua.foxminded.tasks.university_cms.form.GroupsFormData;
+import ua.foxminded.tasks.university_cms.form.SchedulesFormData;
 import ua.foxminded.tasks.university_cms.form.TeachersFormData;
 
 @Service
@@ -29,16 +32,18 @@ public class FormService {
 	private final TeacherService teacherService;
 	private final GroupCourseService groupCourseService;
 	private final TeacherCourseService teacherCourseService;
+	private final ScheduleService scheduleService;
 	
 	public FormService(CourseService courseService, GroupService groupService, StudentService studentService,
 					   TeacherService teacherService, GroupCourseService groupCourseService, 
-					   TeacherCourseService teacherCourseService) {
+					   TeacherCourseService teacherCourseService, ScheduleService scheduleService) {
 		this.courseService = courseService;
 		this.groupService = groupService;
 		this.studentService = studentService;
 		this.teacherService = teacherService;
 		this.groupCourseService = groupCourseService;
 		this.teacherCourseService = teacherCourseService;
+		this.scheduleService = scheduleService;
 	}
 	
 	public CoursesFormData prepareCoursesFormData() {
@@ -129,8 +134,8 @@ public class FormService {
 		List<Course> allCourses = courseService.findAll();
 		List<Course> courses = groupCourseService.findByGroup(group);
 		List<Course> filteredCourses = allCourses.stream()
-                .filter(c -> !courses.contains(c))
-                .collect(Collectors.toList());
+                								.filter(c -> !courses.contains(c))
+                								.collect(Collectors.toList());
 		
 		data.setGroup(group);
 		data.setFilteredCourses(filteredCourses);
@@ -171,6 +176,61 @@ public class FormService {
 		data.setTeacherCoursesMap(map);
 		
 		return data;
+	}
+	
+	public SchedulesFormData prepareSchedulesForm() {
+		
+        List<Course> courses = courseService.findAll();
+        List<Group> groups = groupService.findAll();
+        List<Teacher> teachers = teacherService.findAll();
+        List<Student> students = studentService.findAll();
+        
+        return new SchedulesFormData(courses, groups, teachers, students);
+	}
+	
+	public List<Course> prepareEditScheduleCourseForm(Long id) {
+		
+		Schedule schedule = scheduleService.findById(id);
+		Course course = schedule.getCourse();
+		List<Course> courses = courseService.findAll();
+		
+		return courses.stream()
+					  .filter(c -> !c.equals(course))
+					  .collect(Collectors.toList());
+	}
+	
+	public List<Group> prepareEditScheduleGroupForm(Long id) {
+		
+		Schedule schedule = scheduleService.findById(id);
+		Group group = schedule.getGroup();
+		List<Group> groups = groupService.findAll();
+		
+		return groups.stream()
+				.filter(g -> !g.equals(group))
+				.collect(Collectors.toList());
+	}
+	
+	public List<Schedule> prepareScheduleListForTeacher(List<TeacherCourse> teacherCourses) {
+		
+		List<Course> courses = new ArrayList<>();
+		
+		for (TeacherCourse tc : teacherCourses) {
+			courses.add(tc.getCourse());
+		}
+		
+		return scheduleService.filterByWeek(courses);
+	}
+	
+	public List<Schedule> prepareScheduleListForGroup(List<Course> courses) {
+		
+		return scheduleService.filterByWeek(courses);
+	}
+	
+	public List<Schedule> prepareScheduleListForStudent(Student student) {
+		
+		List<Course> courses = groupCourseService.findByGroup(student.getGroup());
+		
+		return scheduleService.filterByWeek(courses);
 	}
 
 }

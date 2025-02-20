@@ -52,7 +52,7 @@ class CourseControllerTest {
 
 	@Test
 	@WithMockUser(username = "admin", roles = "ADMIN")
-	void showCoursesForm_coursesPageRequest_returnsCoursesView() throws Exception {
+	void showCoursesForm_CoursesPageRequest_ReturnsCoursesView() throws Exception {
 		
 		when(formService.prepareCoursesFormData()).thenReturn(new CoursesFormData());
 		mockMvc.perform(MockMvcRequestBuilders.get("/courses"))
