@@ -40,7 +40,7 @@ public class CourseController {
 		this.groupCourseService = groupCourseService;
 	}
 		
-	@PreAuthorize("hasAnyRole('ADMIN', 'STAFF', 'TEACHER', 'STUDENT')")
+	@PreAuthorize("isAnonymous() or hasAnyRole('ADMIN', 'STAFF', 'TEACHER', 'STUDENT')")
 	@GetMapping("/courses")
 	public String showCoursesForm(Model model) {
 

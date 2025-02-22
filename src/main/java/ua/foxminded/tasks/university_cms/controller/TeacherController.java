@@ -34,7 +34,7 @@ public class TeacherController {
 		this.teacherCourseService = teacherCourseService;
 	}
 	
-	@PreAuthorize("hasAnyRole('ADMIN', 'STAFF', 'TEACHER', 'STUDENT')")
+	@PreAuthorize("isAnonymous() or hasAnyRole('ADMIN', 'STAFF', 'TEACHER', 'STUDENT')")
 	@GetMapping("/teachers")
 	public String showTeachersForm(Model model) {
 		

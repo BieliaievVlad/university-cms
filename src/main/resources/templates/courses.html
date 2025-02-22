@@ -27,7 +27,7 @@
 						<th sec:authorize="hasAnyRole('ADMIN', 'STAFF')">ID</th>
 						<th>Course</th>
 						<th>Teacher</th>
-						<th>Groups</th>
+						<th sec:authorize="isAuthenticated()">Groups</th>
 						<th sec:authorize="hasAnyRole('ADMIN', 'STAFF')">Actions</th>
 					</tr>
 				</thead>
@@ -38,7 +38,7 @@
 							<td th:text="${teacherCourse.course.name}"></td>
 							<td
 								th:text="${teacherCourse.teacher.id != 0 ? teacherCourse.teacher.firstName + ' ' + teacherCourse.teacher.lastName : 'N/A'}"></td>
-							<td>
+							<td sec:authorize="isAuthenticated()">
 								<ul>
 									<th:block
 										th:each="group : ${courseGroupsMap[teacherCourse.course]}">

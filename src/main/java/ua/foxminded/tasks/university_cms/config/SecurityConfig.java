@@ -3,6 +3,7 @@ package ua.foxminded.tasks.university_cms.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -14,7 +15,7 @@ import ua.foxminded.tasks.university_cms.service.UserService;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity(securedEnabled = true)
+@EnableMethodSecurity(securedEnabled = true, prePostEnabled = true)
 public class SecurityConfig {
 
     @Autowired
@@ -34,7 +35,7 @@ public class SecurityConfig {
             	.sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
             	.and()
             .authorizeRequests()
-            	.requestMatchers("/", "/login").permitAll()
+            	.requestMatchers("/", "/login", "/teachers", "/courses").permitAll()
             	.requestMatchers("/static/**", "/css/**", "/js/**", "/images/**", "/webjars/**").permitAll()
                 .anyRequest().authenticated();
 
