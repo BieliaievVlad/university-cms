@@ -41,17 +41,23 @@ public class ScheduleController {
 	
 	@PreAuthorize("hasAnyRole('ADMIN', 'STAFF', 'TEACHER', 'STUDENT')")
 	@GetMapping("/schedules")
-	public String showSchedulesForm(@RequestParam(value = "date", required = false) String date,
+	public String showSchedulesForm(@RequestParam(value = "startDate", required = false) String startDate,
+									@RequestParam(value = "endDate", required = false) String endDate,
             						@RequestParam(value = "course", required = false) Long courseId,
             						@RequestParam(value = "group", required = false) Long groupId,
             						@RequestParam(value = "teacher", required = false) Long teacherId,
             						@RequestParam(value = "student", required = false) Long studentId,
             						Model model) {
 		
-        List<Schedule> schedules = scheduleService.filterSchedules(date, courseId, groupId, teacherId, studentId);
+	    if ((startDate == null ||startDate.isEmpty()) || (endDate == null || endDate.isEmpty())) {
+	            model.addAttribute("dateAlert", "Please choose both dates or leave it empty to list all Schedules");
+	        }
+		
+        List<Schedule> schedules = scheduleService.filterSchedules(startDate, endDate, courseId, groupId, teacherId, studentId);
         SchedulesFormData data = formService.prepareSchedulesForm();
 		
-        model.addAttribute("date", date);
+        model.addAttribute("startDate", startDate);
+        model.addAttribute("endDate", endDate);
         model.addAttribute("courseId", courseId);
         model.addAttribute("groupId", groupId);
         model.addAttribute("teacherId", teacherId);

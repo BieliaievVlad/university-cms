@@ -331,7 +331,7 @@ class FormServiceTest {
 		List<Schedule> expected = List.of(schedule2);
 		
 		when(groupCourseRepository.findByGroupId(anyLong())).thenReturn(List.of(new GroupCourse(group2, course2)));
-		when(dateUtil.getDateList()).thenReturn(dates);
+		when(dateUtil.getDateListOfWeek()).thenReturn(dates);
 		when(scheduleRepository.findAll()).thenReturn(List.of(schedule1, schedule2));
 		
 		List<Schedule> actual = formService.prepareScheduleListForStudent(student);
@@ -358,7 +358,7 @@ class FormServiceTest {
 		List<LocalDate> dates = List.of(dateTime1.toLocalDate(), dateTime2.toLocalDate());
 		
 		when(scheduleRepository.findAll()).thenReturn(List.of(schedule1, schedule2));
-		when(dateUtil.getDateList()).thenReturn(dates);
+		when(dateUtil.getDateListOfWeek()).thenReturn(dates);
 		
 		List<Schedule> actual = formService.prepareScheduleListForGroup(List.of(course2));
 		
@@ -387,7 +387,7 @@ class FormServiceTest {
 		List<Schedule> expected = List.of(schedule2);
 		
 		when(scheduleRepository.findAll()).thenReturn(List.of(schedule1, schedule2));
-		when(dateUtil.getDateList()).thenReturn(dates);
+		when(dateUtil.getDateListOfWeek()).thenReturn(dates);
 		
 		List<Schedule> actual = formService.prepareScheduleListForTeacher(list);
 		

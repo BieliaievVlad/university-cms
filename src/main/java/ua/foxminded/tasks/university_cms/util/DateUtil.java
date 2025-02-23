@@ -20,7 +20,7 @@ public class DateUtil {
         return now.with(DayOfWeek.SUNDAY);
     }
     
-    public List<LocalDate> getDateList() {
+    public List<LocalDate> getDateListOfWeek() {
     	
     	LocalDate startOfWeek = getStartOfWeek();
     	LocalDate endOfWeek = getEndOfWeek();
@@ -34,6 +34,17 @@ public class DateUtil {
         }
 
         return dateList;
+    }
+    
+    public List<LocalDate> getDateListOfInterval(LocalDate start, LocalDate end) {
+    		
+        	List<LocalDate> dateList = new ArrayList<>();
+        	LocalDate currentDate = start;
+        	while(!currentDate.isAfter(end)) {
+        		dateList.add(currentDate);
+        		currentDate = currentDate.plusDays(1);
+        	}
+        	return dateList;
     }
 
 }

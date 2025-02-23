@@ -15,13 +15,22 @@
 
 		<h1 class="text-center">Schedules</h1>
 		
+	<div th:if="${dateAlert}" class="alert alert-warning mt-3">
+    	<p th:text="${dateAlert}"></p>
+	</div>
+		
 	<form th:action="@{/schedules}" method="get">
         <div class="row">
             <div class="col-md-3">
-                <label for="date" class="form-label">Date</label>
-                <input type="date" id="date" name="date" class="form-control"
-                    th:value="${date}" />
+                <label for="startDate" class="form-label">From Date</label>
+                <input type="date" id="startDate" name="startDate" class="form-control"
+                    th:value="${startDate}" />
             </div>
+            <div class="col-md-3">
+                <label for="endDate" class="form-label">To Date</label>
+                <input type="date" id="endDate" name="endDate" class="form-control"
+                    th:value="${endDate}" />
+            </div>                        
             <div class="col-md-3">
                 <label for="course" class="form-label">Course</label>
                 <select id="course" name="course" class="form-control">
