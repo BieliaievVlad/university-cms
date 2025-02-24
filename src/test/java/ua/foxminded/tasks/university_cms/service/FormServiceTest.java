@@ -199,24 +199,6 @@ class FormServiceTest {
 	}
 	
 	@Test
-	void prepareStudentsFormData_ValidValue_CalledMethodsAndReturnsExpected() {
-		
-		Student student1 = new Student("First_Name1", "Last_Name1");
-		Student student2 = new Student("First_Name2", "Last_Name2");
-		student1.setId(1L);
-		student2.setId(2L);
-		List<Student> resultList = List.of(student2, student1);
-		List<Student> expectedSortedList = List.of(student1, student2);
-		
-		when(studentRepository.findAll()).thenReturn(resultList);
-		
-		List<Student> actual = formService.prepareStudentsFormData();
-		
-		assertThat(actual).usingRecursiveComparison().isEqualTo(expectedSortedList);
-		verify(studentRepository, times(1)).findAll();
-	}
-	
-	@Test
 	void prepareTeachersFormData_ValidValue_CalledMethodsAndReturnsExpected() {
 		
 		Teacher teacher1 = new Teacher("First_Name1", "LastName1");

@@ -14,6 +14,26 @@
 	<div class="container mt-4">
 
 		<h1 class="text-center">Students</h1>
+		
+	<form th:action="@{/students}" method="get">
+        <div class="row">                        
+            <div class="col-md-3">
+                <label for="group" class="form-label">Group</label>
+                <select id="group" name="group" class="form-control">
+                    <option value="">Select Group</option>
+                    <option th:each="group : ${groups}" 
+                    		th:if="${group.id != 0}"
+                            th:value="${group.id}" 
+                            th:text="${group.name}" 
+                            th:selected="${group.id == groupId}"></option>
+                </select>
+            </div>   
+        </div>
+        <div class="mt-3 text-center">
+            <button type="submit" class="btn btn-primary">Filter</button>
+             <a href="/students" class="btn btn-secondary">Reset Filters</a>
+        </div>
+    </form>		
 
 		<div class="mt-3" sec:authorize="hasAnyRole('ADMIN')">
 			<a href="/add-student" class="btn btn-primary">Add New Student</a>

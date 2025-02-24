@@ -1,5 +1,6 @@
 package ua.foxminded.tasks.university_cms.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.test.context.ActiveProfiles;
 
 import ua.foxminded.tasks.university_cms.entity.Group;
@@ -134,6 +136,44 @@ class StudentServiceTest {
 		
 		verify(repository, times(1)).findById(id);
 		verify(repository, times(1)).save(any(Student.class));
+	}
+	
+	@Test
+	void filterStudents_ValidValue_CalledMethodsAndReturnsExpected() {
+		
+		Group group = new Group(1L, "Group_Name", 10L);
+		Student student1 = new Student("First_Name_1", "Last_Name_1", group);
+		student1.setId(2L);
+		Student student2 = new Student("First_Name_2", "Last_Name_2", group);
+		student2.setId(1L);
+		List<Student> expected = List.of(student2, student1);
+		
+		when(repository.findAll(any(Specification.class))).thenReturn(expected);
+		
+		List<Student> actual = service.filterStudents(group.getId());
+		
+		assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
+		verify(repository, times(1)).findAll(any(Specification.class));
+	}
+	
+	@Test
+	void filterStudents_EmptyGroupId_CalledMethodsAndReturnsExpected() {
+		
+		Long groupId = null;
+		Group group1 = new Group(1L, "Group_Name_1", 10L);
+		Group group2 = new Group(2L, "Group_Name_2", 20L);
+		Student student1 = new Student("First_Name_1", "Last_Name_1", group1);
+		student1.setId(2L);
+		Student student2 = new Student("First_Name_2", "Last_Name_2", group2);
+		student2.setId(1L);
+		List<Student> expected = List.of(student2, student1);
+		
+		when(repository.findAll(any(Specification.class))).thenReturn(expected);
+		
+		List<Student> actual = service.filterStudents(groupId);
+		
+		assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
+		verify(repository, times(1)).findAll(any(Specification.class));
 	}
 
 }

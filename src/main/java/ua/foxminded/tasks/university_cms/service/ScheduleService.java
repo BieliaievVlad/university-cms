@@ -140,13 +140,13 @@ public class ScheduleService {
     		
         	List<LocalDate> dates = dateUtil.getDateListOfInterval(start, end);
         	
-        	for (LocalDate d : dates) {
+        	for (LocalDate date : dates) {
         		
                 Specification<Schedule> specification = Specification.where(ScheduleSpecification.filterByCourseId(courseId))
     					   											 .and(ScheduleSpecification.filterByGroupId(groupId))
     					   											 .and(ScheduleSpecification.filterByTeacherId(teacherId))
     					   											 .and(ScheduleSpecification.filterByStudentId(studentId))
-    					   											 .and(ScheduleSpecification.filterByDate(d));
+    					   											 .and(ScheduleSpecification.filterByDate(date));
                 List<Schedule> schedules = repository.findAll(specification);
                 schedulesList.addAll(schedules);
         	}
