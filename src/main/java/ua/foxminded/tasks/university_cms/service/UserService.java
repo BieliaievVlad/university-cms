@@ -16,10 +16,13 @@ import ua.foxminded.tasks.university_cms.repository.UserRepository;
 public class UserService implements UserDetailsService {
 
 	private final UserRepository repository;
+	private final SecurityService securityService;
 
 	@Autowired
-	public UserService(UserRepository repository) {
+	public UserService(UserRepository repository, 
+					   SecurityService securityService) {
 		this.repository = repository;
+		this.securityService = securityService;
 	}
 
 	public List<User> findAll() {
@@ -45,6 +48,8 @@ public class UserService implements UserDetailsService {
 			
 			throw new IllegalArgumentException("User is not valid.");
 		}
+		
+		securityService.setCurrentUserFromSecurityContext();
 		repository.save(user);
 	}
 	
@@ -54,6 +59,7 @@ public class UserService implements UserDetailsService {
 		
 		if (optUser.isPresent()) {
 			
+			securityService.setCurrentUserFromSecurityContext();
 			repository.delete(optUser.get());
 			
 		} else {

@@ -23,18 +23,21 @@ public class GroupCourseService {
 	private final GroupService groupService;
 	private final StudentService studentService;
 	private final ScheduleService scheduleService;
+	private final SecurityService securityService;
 
 	@Autowired
 	public GroupCourseService(GroupCourseRepository repository, 
 							  CourseService courseService, 
 							  GroupService groupService, 
 							  StudentService studentService,
-							  ScheduleService scheduleService) {
+							  ScheduleService scheduleService,
+							  SecurityService securityService) {
 		this.repository = repository;
 		this.courseService = courseService;
 		this.groupService = groupService;
 		this.studentService = studentService;
 		this.scheduleService = scheduleService;
+		this.securityService = securityService;
 	}
 
 	public void save(GroupCourse groupCourse) {
@@ -46,6 +49,7 @@ public class GroupCourseService {
 			
 			GroupCourse newGroupCourse = new GroupCourse(groupCourse.getGroup(),
 														 groupCourse.getCourse());
+			securityService.setCurrentUserFromSecurityContext();
 			repository.save(newGroupCourse);
 
 		} else {
@@ -60,6 +64,7 @@ public class GroupCourseService {
 
 		if (optional.isPresent()) {
 
+			securityService.setCurrentUserFromSecurityContext();
 			repository.delete(groupCourse);
 
 		} else {
@@ -106,6 +111,7 @@ public class GroupCourseService {
 		Student student = studentService.findById(studentId);
 		Group group = groupService.findById(groupId);
 		student.setGroup(group);
+		
 		studentService.save(student);
 	}
 	

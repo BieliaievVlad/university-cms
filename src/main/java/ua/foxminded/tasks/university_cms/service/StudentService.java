@@ -20,11 +20,14 @@ public class StudentService {
 
 	private final StudentRepository repository;
 	private final GroupService groupService;
+	private final SecurityService securityService;
 
 	@Autowired
-	public StudentService(StudentRepository repository, GroupService groupService) {
+	public StudentService(StudentRepository repository, GroupService groupService,
+						  SecurityService securityService) {
 		this.repository = repository;
 		this.groupService = groupService;
+		this.securityService = securityService;
 	}
 
 	public List<Student> findAll() {
@@ -52,6 +55,7 @@ public class StudentService {
 			throw new IllegalArgumentException("Student is not valid.");
 		}
 
+		securityService.setCurrentUserFromSecurityContext();
 		repository.save(student);
 
 	}
@@ -62,6 +66,7 @@ public class StudentService {
 
 		if (optStudent.isPresent()) {
 
+			securityService.setCurrentUserFromSecurityContext();
 			repository.delete(optStudent.get());
 
 		} else {
@@ -115,5 +120,4 @@ public class StudentService {
 		return student != null && student.getFirstName() != null
 				&& student.getLastName() != null;
 	}
-
 }
