@@ -29,6 +29,9 @@ class TeacherServiceTest {
 	
 	@MockBean
 	TeacherCourseRepository teacherCourseRepository;
+	
+	@MockBean
+	SecurityService securityService;
 
 	@Autowired
 	TeacherService service;

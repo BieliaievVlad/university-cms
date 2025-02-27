@@ -41,6 +41,9 @@ class CourseServiceTest {
 	
 	@MockBean
 	GroupCourseRepository groupCourseRepository;
+	
+	@MockBean
+	SecurityService securityService;
 
 	@Autowired
 	CourseService courseService;

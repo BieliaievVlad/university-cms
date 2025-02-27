@@ -35,6 +35,9 @@ class ScheduleServiceTest {
 	
 	@MockBean
 	CourseRepository courseRepository;
+	
+	@MockBean
+	SecurityService securityService;
 
 	@Autowired
 	ScheduleService service;

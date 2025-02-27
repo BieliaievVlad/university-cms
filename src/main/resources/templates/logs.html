@@ -23,6 +23,62 @@
 	<div th:replace="~{layout :: navbar}"></div>
 
 		<h1 class="text-center">Logs</h1>
+		
+	<div th:if="${dateAlert}" class="alert alert-warning mt-3">
+    	<p th:text="${dateAlert}"></p>
+	</div>
+	
+	<form th:action="@{/logs}" method="get">
+        <div class="row">
+            <div class="col-md-3">
+                <label for="startDate" class="form-label">From Date</label>
+                <input type="date" id="startDate" name="startDate" class="form-control"
+                    th:value="${startDate}" />
+            </div>
+            <div class="col-md-3">
+                <label for="endDate" class="form-label">To Date</label>
+                <input type="date" id="endDate" name="endDate" class="form-control"
+                    th:value="${endDate}" />
+            </div>                        
+            <div class="col-md-3">
+                <label for="username" class="form-label">User</label>
+                <select id="username" name="username" class="form-control">
+                    <option value="">Select User</option>
+                    <option th:each="name : ${usernames}" 
+                    		th:if="${name != null && !name.isEmpty()}"
+                            th:value="${name}" 
+                            th:text="${name}" 
+                            th:selected="${name == username}"></option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="tableName" class="form-label">Table</label>
+                <select id="tableName" name="tableName" class="form-control">
+                    <option value="">Select Table</option>
+                    <option th:each="table : ${tableNames}" 
+                            th:value="${table}" 
+                            th:text="${table}" 
+                            th:selected="${table == tableName}"></option>
+                </select>
+            </div>
+            
+            <div class="col-md-3">
+                <label for="operationType" class="form-label">Operation</label>
+                <select id="operationType" name="operationType" class="form-control">
+                    <option value="">Select Operation</option>
+                    <option th:each="operation : ${operations}" 
+                            th:value="${operation}" 
+                            th:text="${operation}" 
+                            th:selected="${operation == operationType}"></option>
+                </select>
+            </div> 
+
+        </div>
+        <div class="mt-3 text-center">
+            <button type="submit" class="btn btn-primary">Filter</button>
+             <a href="/logs" class="btn btn-secondary">Reset Filters</a>
+        </div>
+    </form>
 
 	<div class="mt-3">
 		<table class="table table-bordered">

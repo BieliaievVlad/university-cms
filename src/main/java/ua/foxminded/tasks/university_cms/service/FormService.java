@@ -20,6 +20,7 @@ import ua.foxminded.tasks.university_cms.form.CoursesFormData;
 import ua.foxminded.tasks.university_cms.form.EditCoursesFormData;
 import ua.foxminded.tasks.university_cms.form.EditGroupsFormData;
 import ua.foxminded.tasks.university_cms.form.GroupsFormData;
+import ua.foxminded.tasks.university_cms.form.LogsFormData;
 import ua.foxminded.tasks.university_cms.form.SchedulesFormData;
 import ua.foxminded.tasks.university_cms.form.TeachersFormData;
 
@@ -33,10 +34,12 @@ public class FormService {
 	private final GroupCourseService groupCourseService;
 	private final TeacherCourseService teacherCourseService;
 	private final ScheduleService scheduleService;
+	private final AuditLogService auditLogService; 
 	
 	public FormService(CourseService courseService, GroupService groupService, StudentService studentService,
 					   TeacherService teacherService, GroupCourseService groupCourseService, 
-					   TeacherCourseService teacherCourseService, ScheduleService scheduleService) {
+					   TeacherCourseService teacherCourseService, ScheduleService scheduleService, 
+					   AuditLogService auditLogService) {
 		this.courseService = courseService;
 		this.groupService = groupService;
 		this.studentService = studentService;
@@ -44,6 +47,7 @@ public class FormService {
 		this.groupCourseService = groupCourseService;
 		this.teacherCourseService = teacherCourseService;
 		this.scheduleService = scheduleService;
+		this.auditLogService = auditLogService;
 	}
 	
 	public CoursesFormData prepareCoursesFormData() {
@@ -220,6 +224,21 @@ public class FormService {
 		List<Course> courses = groupCourseService.findByGroup(student.getGroup());
 		
 		return scheduleService.filterByWeek(courses);
+	}
+	
+	public LogsFormData prepareLogsForm() {
+		
+		LogsFormData data = new LogsFormData();
+		
+		List<String> usernames = auditLogService.findUsernames();
+		List<String> tableNames = auditLogService.findTableNames();
+		List<String> operations = auditLogService.findOperations();
+		
+		data.setUsernames(usernames);
+		data.setTableNames(tableNames);
+		data.setOperations(operations);
+		
+		return data;
 	}
 
 }

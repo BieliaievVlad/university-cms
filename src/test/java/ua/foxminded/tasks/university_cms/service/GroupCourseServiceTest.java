@@ -44,6 +44,9 @@ class GroupCourseServiceTest {
 	
 	@MockBean
 	ScheduleRepository scheduleRepository;
+	
+	@MockBean
+	SecurityService securityService;
 
 	@Autowired
 	GroupCourseService service;

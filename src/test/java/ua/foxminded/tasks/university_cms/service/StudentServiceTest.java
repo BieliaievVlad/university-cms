@@ -30,6 +30,9 @@ class StudentServiceTest {
 	
 	@MockBean
 	GroupRepository groupRepository;
+	
+	@MockBean
+	SecurityService securityService;
 
 	@Autowired
 	StudentService service;
