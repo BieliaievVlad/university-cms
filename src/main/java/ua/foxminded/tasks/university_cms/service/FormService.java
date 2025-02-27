@@ -143,17 +143,6 @@ public class FormService {
 		return data;
 	}
 	
-	public List<Student> prepareStudentsFormData() {
-		
-		List<Student> students = studentService.findAll();
-		
-	    students = students.stream()
-                .sorted(Comparator.comparing(Student::getId))
-                .collect(Collectors.toList());
-	    
-	    return students;
-	}
-	
 	public TeachersFormData prepareTeachersFormData() {
 		
 		TeachersFormData data = new TeachersFormData();

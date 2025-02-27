@@ -199,24 +199,6 @@ class FormServiceTest {
 	}
 	
 	@Test
-	void prepareStudentsFormData_ValidValue_CalledMethodsAndReturnsExpected() {
-		
-		Student student1 = new Student("First_Name1", "Last_Name1");
-		Student student2 = new Student("First_Name2", "Last_Name2");
-		student1.setId(1L);
-		student2.setId(2L);
-		List<Student> resultList = List.of(student2, student1);
-		List<Student> expectedSortedList = List.of(student1, student2);
-		
-		when(studentRepository.findAll()).thenReturn(resultList);
-		
-		List<Student> actual = formService.prepareStudentsFormData();
-		
-		assertThat(actual).usingRecursiveComparison().isEqualTo(expectedSortedList);
-		verify(studentRepository, times(1)).findAll();
-	}
-	
-	@Test
 	void prepareTeachersFormData_ValidValue_CalledMethodsAndReturnsExpected() {
 		
 		Teacher teacher1 = new Teacher("First_Name1", "LastName1");
@@ -331,7 +313,7 @@ class FormServiceTest {
 		List<Schedule> expected = List.of(schedule2);
 		
 		when(groupCourseRepository.findByGroupId(anyLong())).thenReturn(List.of(new GroupCourse(group2, course2)));
-		when(dateUtil.getDateList()).thenReturn(dates);
+		when(dateUtil.getDateListOfWeek()).thenReturn(dates);
 		when(scheduleRepository.findAll()).thenReturn(List.of(schedule1, schedule2));
 		
 		List<Schedule> actual = formService.prepareScheduleListForStudent(student);
@@ -358,7 +340,7 @@ class FormServiceTest {
 		List<LocalDate> dates = List.of(dateTime1.toLocalDate(), dateTime2.toLocalDate());
 		
 		when(scheduleRepository.findAll()).thenReturn(List.of(schedule1, schedule2));
-		when(dateUtil.getDateList()).thenReturn(dates);
+		when(dateUtil.getDateListOfWeek()).thenReturn(dates);
 		
 		List<Schedule> actual = formService.prepareScheduleListForGroup(List.of(course2));
 		
@@ -387,7 +369,7 @@ class FormServiceTest {
 		List<Schedule> expected = List.of(schedule2);
 		
 		when(scheduleRepository.findAll()).thenReturn(List.of(schedule1, schedule2));
-		when(dateUtil.getDateList()).thenReturn(dates);
+		when(dateUtil.getDateListOfWeek()).thenReturn(dates);
 		
 		List<Schedule> actual = formService.prepareScheduleListForTeacher(list);
 		

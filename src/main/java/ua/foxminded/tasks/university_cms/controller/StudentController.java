@@ -33,11 +33,14 @@ public class StudentController {
 	
 	@PreAuthorize("hasAnyRole('ADMIN', 'STAFF', 'TEACHER', 'STUDENT')")
 	@GetMapping("/students")
-	public String showStudentsForm(Model model) {
+	public String showStudentsForm(@RequestParam(value = "group", required = false) Long groupId, 
+								   Model model) {
 		
-		List<Student> students = formService.prepareStudentsFormData();
+		List<Student> students = studentService.filterStudents(groupId);
+		List<Group> groups = groupService.findAll();
 	    
 		model.addAttribute("students", students);
+		model.addAttribute("groups", groups);
 		return "students";	
 	}
 	

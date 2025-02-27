@@ -70,8 +70,16 @@ public class ScheduleService {
 			repository.delete(optSсhedule.get());
 
 		} else {
-			throw new EntityNotFoundException("Shedule is not found.");
+			throw new EntityNotFoundException("Schedule is not found.");
 		}
+	}
+	
+	public List<Schedule> findByGroupId(Long groupId) {
+		return repository.findByGroupId(groupId);
+	}
+	
+	public List<Schedule> findByCourseId(Long courseId) {
+		return repository.findByCourseId(courseId);
 	}
 	
 	public void addSchedule(LocalDateTime dateTime, Long courseId, Long groupId) {
@@ -119,25 +127,48 @@ public class ScheduleService {
 		return filteredSchedules;
 	}
 	
-    public List<Schedule> filterSchedules(String date, Long courseId, Long groupId, Long teacherId, Long studentId) {
-        LocalDate dateTime = null;
-        if (date != null && !date.isEmpty()) {
-            dateTime = LocalDate.parse(date);
-        }
-
-        Specification<Schedule> specification = Specification.where(ScheduleSpecification.filterByCourseId(courseId))
-                											   .and(ScheduleSpecification.filterByGroupId(groupId))
-                											   .and(ScheduleSpecification.filterByTeacherId(teacherId))
-                											   .and(ScheduleSpecification.filterByStudentId(studentId))
-                											   .and(ScheduleSpecification.filterByDate(dateTime));
-
-        return repository.findAll(specification);
+    public List<Schedule> filterSchedules(String startDate, String endDate, 
+			  							  Long courseId, Long groupId, 
+			  							  Long teacherId, Long studentId) {
+    	LocalDate start = null;
+    	LocalDate end = null;
+    	List<Schedule> schedulesList = new ArrayList<>();
+    	
+    	if (startDate != null && !startDate.isEmpty() && endDate != null && !endDate.isEmpty()) {
+    		start = LocalDate.parse(startDate);
+    		end = LocalDate.parse(endDate);
+    		
+        	List<LocalDate> dates = dateUtil.getDateListOfInterval(start, end);
+        	
+        	for (LocalDate date : dates) {
+        		
+                Specification<Schedule> specification = Specification.where(ScheduleSpecification.filterByCourseId(courseId))
+    					   											 .and(ScheduleSpecification.filterByGroupId(groupId))
+    					   											 .and(ScheduleSpecification.filterByTeacherId(teacherId))
+    					   											 .and(ScheduleSpecification.filterByStudentId(studentId))
+    					   											 .and(ScheduleSpecification.filterByDate(date));
+                List<Schedule> schedules = repository.findAll(specification);
+                schedulesList.addAll(schedules);
+        	}
+        	return schedulesList.stream()
+                    			.sorted(Comparator.comparing(Schedule::getDateTime))
+                    			.collect(Collectors.toList());
+    	} else {
+    		
+    		LocalDate date = null;
+            Specification<Schedule> specification = Specification.where(ScheduleSpecification.filterByCourseId(courseId))
+						 										 .and(ScheduleSpecification.filterByGroupId(groupId))
+						 										 .and(ScheduleSpecification.filterByTeacherId(teacherId))
+						 										 .and(ScheduleSpecification.filterByStudentId(studentId))
+						 										 .and(ScheduleSpecification.filterByDate(date));
+            return repository.findAll(specification);
+    	}
     }
     
     public List<Schedule> filterByWeek(List<Course> courses) {
     	
 		List<Schedule> schedules = findByCourses(courses);
-		List<LocalDate> dates = dateUtil.getDateList();
+		List<LocalDate> dates = dateUtil.getDateListOfWeek();
 		
 		return schedules.stream()
 						.filter(schedule -> dates.contains(schedule.getDateTime().toLocalDate()))

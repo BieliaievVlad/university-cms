@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import ua.foxminded.tasks.university_cms.entity.Course;
 import ua.foxminded.tasks.university_cms.entity.GroupCourse;
+import ua.foxminded.tasks.university_cms.entity.Schedule;
 import ua.foxminded.tasks.university_cms.entity.Teacher;
 import ua.foxminded.tasks.university_cms.entity.TeacherCourse;
 import ua.foxminded.tasks.university_cms.entity.TeacherCourseId;
@@ -21,16 +22,19 @@ public class TeacherCourseService {
 	private final CourseService courseService;
 	private final TeacherService teacherService;
 	private final GroupCourseService groupCourseService;
+	private final ScheduleService scheduleService;
 
 	@Autowired
 	public TeacherCourseService(TeacherCourseRepository repository, 
 								CourseService courseService, 
 								TeacherService teacherService, 
-								GroupCourseService groupCourseService) {
+								GroupCourseService groupCourseService,
+								ScheduleService scheduleService) {
 		this.repository = repository;
 		this.courseService = courseService;
 		this.teacherService = teacherService;
 		this.groupCourseService = groupCourseService;
+		this.scheduleService = scheduleService;
 	}
 	
 	public List<TeacherCourse> findAll() {
@@ -106,7 +110,14 @@ public class TeacherCourseService {
 	public void deleteTeacherCourse(Long id) {
 		
     	TeacherCourse teacherCourse = findByCourseId(id);
+    	Course course = teacherCourse.getCourse();
     	List<GroupCourse> groupCourses = groupCourseService.findByCourseId(id);
+    	List<Schedule> schedules = scheduleService.findByCourseId(course.getId());
+    	
+    	for (Schedule s : schedules) {
+    		Long scheduleId = s.getId();
+    		scheduleService.delete(scheduleId);
+    	}
     	
     	for (GroupCourse groupCourse : groupCourses) {
     		groupCourseService.delete(groupCourse);

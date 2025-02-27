@@ -11,6 +11,7 @@ import ua.foxminded.tasks.university_cms.entity.Course;
 import ua.foxminded.tasks.university_cms.entity.Group;
 import ua.foxminded.tasks.university_cms.entity.GroupCourse;
 import ua.foxminded.tasks.university_cms.entity.GroupCourseId;
+import ua.foxminded.tasks.university_cms.entity.Schedule;
 import ua.foxminded.tasks.university_cms.entity.Student;
 import ua.foxminded.tasks.university_cms.repository.GroupCourseRepository;
 
@@ -21,16 +22,19 @@ public class GroupCourseService {
 	private final CourseService courseService;
 	private final GroupService groupService;
 	private final StudentService studentService;
+	private final ScheduleService scheduleService;
 
 	@Autowired
 	public GroupCourseService(GroupCourseRepository repository, 
 							  CourseService courseService, 
 							  GroupService groupService, 
-							  StudentService studentService) {
+							  StudentService studentService,
+							  ScheduleService scheduleService) {
 		this.repository = repository;
 		this.courseService = courseService;
 		this.groupService = groupService;
 		this.studentService = studentService;
+		this.scheduleService = scheduleService;
 	}
 
 	public void save(GroupCourse groupCourse) {
@@ -118,6 +122,7 @@ public class GroupCourseService {
 		
 		List<GroupCourse> groupCourses = findByGroupId(id);
 		List<Student> students = studentService.findByGroupId(id);
+		List<Schedule> schedules = scheduleService.findByGroupId(id);
 		
 		for (GroupCourse gc : groupCourses) {
 			delete(gc);
@@ -126,6 +131,11 @@ public class GroupCourseService {
 		for (Student s : students) {
 			Long studentId = s.getId();
 			removeStudentFromGroup(studentId);
+		}
+		
+		for (Schedule s : schedules) {
+			Long scheduleId = s.getId();
+			scheduleService.delete(scheduleId);
 		}
 		
 		groupService.delete(id);

@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,11 +19,13 @@ import org.springframework.test.context.ActiveProfiles;
 import ua.foxminded.tasks.university_cms.entity.Course;
 import ua.foxminded.tasks.university_cms.entity.Group;
 import ua.foxminded.tasks.university_cms.entity.GroupCourse;
+import ua.foxminded.tasks.university_cms.entity.Schedule;
 import ua.foxminded.tasks.university_cms.entity.Teacher;
 import ua.foxminded.tasks.university_cms.entity.TeacherCourse;
 import ua.foxminded.tasks.university_cms.entity.TeacherCourseId;
 import ua.foxminded.tasks.university_cms.repository.CourseRepository;
 import ua.foxminded.tasks.university_cms.repository.GroupCourseRepository;
+import ua.foxminded.tasks.university_cms.repository.ScheduleRepository;
 import ua.foxminded.tasks.university_cms.repository.TeacherCourseRepository;
 import ua.foxminded.tasks.university_cms.repository.TeacherRepository;
 
@@ -41,6 +44,9 @@ class TeacherCourseServiceTest {
 	
 	@MockBean
 	GroupCourseRepository groupCourseRepository;
+	
+	@MockBean
+	ScheduleRepository scheduleRepository;
 
 	@Autowired
 	TeacherCourseService service;
@@ -154,9 +160,15 @@ class TeacherCourseServiceTest {
 		Teacher teacher = new Teacher(1L, "First_Name", "Last_Name");
 		TeacherCourse teacherCourse = new TeacherCourse(teacher, course);
 		GroupCourse groupCourse = new GroupCourse(group, course);
+		LocalDateTime date = LocalDateTime.of(2024, 10, 10, 11, 30);
+		Schedule schedule = new Schedule(date, group, course);
+		schedule.setId(1L);
 		
 		when(teacherCourseRepository.findByCourseId(id)).thenReturn(teacherCourse);
 		when(groupCourseRepository.findByCourseId(id)).thenReturn(List.of(groupCourse));
+		when(scheduleRepository.findByCourseId(anyLong())).thenReturn(List.of(schedule));
+		when(scheduleRepository.findById(anyLong())).thenReturn(Optional.of(schedule));
+		doNothing().when(scheduleRepository).delete(any(Schedule.class));
 		when(groupCourseRepository.findById(groupCourse.getId())).thenReturn(Optional.of(groupCourse));
 		when(teacherCourseRepository.findById(teacherCourse.getId())).thenReturn(Optional.of(teacherCourse));
 		when(courseRepository.findById(id)).thenReturn(Optional.of(course));
@@ -168,6 +180,9 @@ class TeacherCourseServiceTest {
 		
 		verify(teacherCourseRepository, times(1)).findByCourseId(id);
 		verify(groupCourseRepository, times(1)).findByCourseId(id);
+		verify(scheduleRepository, times(1)).findByCourseId(anyLong());
+		verify(scheduleRepository, times(1)).findById(anyLong());
+		verify(scheduleRepository, times(1)).delete(any(Schedule.class));
 		verify(groupCourseRepository, times(1)).findById(groupCourse.getId());
 		verify(teacherCourseRepository, times(1)).findById(teacherCourse.getId());
 		verify(courseRepository, times(1)).findById(id);

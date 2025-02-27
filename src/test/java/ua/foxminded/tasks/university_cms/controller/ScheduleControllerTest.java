@@ -56,7 +56,8 @@ class ScheduleControllerTest {
 		Schedule schedule = new Schedule(1L, dateTime, group, course);
 		
 		when(formService.prepareSchedulesForm()).thenReturn(new SchedulesFormData());
-		when(scheduleService.filterSchedules(anyString(), anyLong(), anyLong(), anyLong(), anyLong())).thenReturn(List.of(schedule));
+		when(scheduleService.filterSchedules(anyString(), anyString(), anyLong(), anyLong(), anyLong(), anyLong()))
+							.thenReturn(List.of(schedule));
 		
 		mockMvc.perform(MockMvcRequestBuilders.get("/schedules"))
 				.andExpect(MockMvcResultMatchers.status().isOk())

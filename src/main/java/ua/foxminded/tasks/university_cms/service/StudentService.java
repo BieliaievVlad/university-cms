@@ -1,15 +1,19 @@
 package ua.foxminded.tasks.university_cms.service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import jakarta.persistence.EntityNotFoundException;
 import ua.foxminded.tasks.university_cms.entity.Group;
 import ua.foxminded.tasks.university_cms.entity.Student;
 import ua.foxminded.tasks.university_cms.repository.StudentRepository;
+import ua.foxminded.tasks.university_cms.specification.StudentSpecification;
 
 @Service
 public class StudentService {
@@ -95,6 +99,16 @@ public class StudentService {
 		student.setLastName(lastName);
 		
 		save(student);
+	}
+	
+	public List<Student> filterStudents (Long groupId) {
+		
+		Specification<Student> specification = Specification.where(StudentSpecification.filterByGroupId(groupId));
+		List<Student> students = repository.findAll(specification);
+		
+		return students.stream()
+                .sorted(Comparator.comparing(Student::getId))
+                .collect(Collectors.toList());
 	}
 
 	private boolean isStudentValid(Student student) {
