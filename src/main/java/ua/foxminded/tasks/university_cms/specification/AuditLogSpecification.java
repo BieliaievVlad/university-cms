@@ -17,16 +17,16 @@ public class AuditLogSpecification {
 		};
 	}
 	
-	public static Specification<AuditLog> filterByUser(String username) {
+	public static Specification<AuditLog> filterByUsername(String username) {
 		return (root, query, criteriaBuilder) -> {
 			if (username != null) {
-				return criteriaBuilder.like(root.get("username"), "%" + username + "%");
+				return criteriaBuilder.equal(root.get("username"), username);
 			}
 			return criteriaBuilder.conjunction();
 		};
 	}
 	
-	public static Specification<AuditLog> filterByTable(String tableName) {
+	public static Specification<AuditLog> filterByTableName(String tableName) {
 		return (root, query, criteriaBuilder) -> {
 			if (tableName != null) {
 				return criteriaBuilder.equal(root.get("tableName"), tableName);
@@ -35,7 +35,7 @@ public class AuditLogSpecification {
 		};
 	}
 	
-	public static Specification<AuditLog> filterByOperation(String operationType) {
+	public static Specification<AuditLog> filterByOperationType(String operationType) {
 		return (root, query, criteriaBuilder) -> {
 			if (operationType != null) {
 				return criteriaBuilder.like(root.get("operationType"), "%" + operationType + "%");

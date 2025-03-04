@@ -45,6 +45,18 @@ public class AuditLogService {
 		LocalDate end = null;
 		List<AuditLog> auditLogsList = new ArrayList<>();
 		
+		if (username == null || username.isEmpty()) {
+			username = null;
+		}
+		
+		if (tableName == null || tableName.isEmpty()) {
+			tableName = null;
+		}
+		
+		if (operationType == null || operationType.isEmpty()) {
+			operationType = null;
+		}
+		
     	if (startDate != null && !startDate.isEmpty() && endDate != null && !endDate.isEmpty()) {
     		start = LocalDate.parse(startDate);
     		end = LocalDate.parse(endDate);
@@ -53,9 +65,9 @@ public class AuditLogService {
         	
         	for (LocalDate date : dates) {
         		Specification<AuditLog> specification = Specification.where(AuditLogSpecification.filterByDate(date))
-        															  .and(AuditLogSpecification.filterByUser(username))
-        															  .and(AuditLogSpecification.filterByTable(tableName))
-        															  .and(AuditLogSpecification.filterByOperation(operationType));
+        															  .and(AuditLogSpecification.filterByUsername(username))
+        															  .and(AuditLogSpecification.filterByTableName(tableName))
+        															  .and(AuditLogSpecification.filterByOperationType(operationType));
         		List<AuditLog> logs = repository.findAll(specification);
         		auditLogsList.addAll(logs);
         		}
@@ -66,9 +78,9 @@ public class AuditLogService {
         	} else {
         		LocalDate date = null;
         		Specification<AuditLog> specification = Specification.where(AuditLogSpecification.filterByDate(date))
-						  												.and(AuditLogSpecification.filterByUser(username))
-						  												.and(AuditLogSpecification.filterByTable(tableName))
-						  												.and(AuditLogSpecification.filterByOperation(operationType));
+						  												.and(AuditLogSpecification.filterByUsername(username))
+						  												.and(AuditLogSpecification.filterByTableName(tableName))
+						  												.and(AuditLogSpecification.filterByOperationType(operationType));
         		return repository.findAll(specification).stream()
         							.sorted(Comparator.comparing(AuditLog :: getId).reversed())
         							.collect(Collectors.toList());

@@ -41,7 +41,7 @@ public class AuditLogController {
 		
 		List<AuditLog> logs = service.filterAuditLogs(startDate, endDate, username, tableName, operationType);
 		LogsFormData data = formService.prepareLogsForm();
-		
+
 		model.addAttribute("logs", logs);
 		model.addAttribute("startDate", startDate);
 		model.addAttribute("endDate", endDate);
