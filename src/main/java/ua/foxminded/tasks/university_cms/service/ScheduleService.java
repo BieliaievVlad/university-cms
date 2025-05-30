@@ -27,14 +27,17 @@ public class ScheduleService {
 	private final GroupService groupService;
 	private final CourseService courseService;
 	private final DateUtil dateUtil;
+	private final SecurityService securityService;
 
 	@Autowired
 	public ScheduleService(ScheduleRepository repository, GroupService groupService, 
-						   CourseService courseService, DateUtil dateUtil) {
+						   CourseService courseService, DateUtil dateUtil, 
+						   SecurityService securityService) {
 		this.repository = repository;
 		this.groupService = groupService;
 		this.courseService = courseService;
 		this.dateUtil = dateUtil;
+		this.securityService = securityService;
 	}
 
 	public List<Schedule> findAll() {
@@ -58,6 +61,7 @@ public class ScheduleService {
 		if (!isSсheduleValid(schedule)) {
 			throw new IllegalArgumentException("Sсhedule is not valid.");
 		}
+		securityService.setCurrentUserFromSecurityContext();
 		repository.save(schedule);
 	}
 
@@ -67,6 +71,7 @@ public class ScheduleService {
 
 		if (optSсhedule.isPresent()) {
 
+			securityService.setCurrentUserFromSecurityContext();
 			repository.delete(optSсhedule.get());
 
 		} else {

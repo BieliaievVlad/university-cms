@@ -19,11 +19,14 @@ public class GroupService {
 
 	private final GroupRepository groupRepository;
 	private final GroupCourseRepository groupCourseRepository;
+	private final SecurityService securityService;
 
 	@Autowired
-	public GroupService(GroupRepository groupRepository, GroupCourseRepository groupCourseRepository) {
+	public GroupService(GroupRepository groupRepository, GroupCourseRepository groupCourseRepository,
+						SecurityService securityService) {
 		this.groupRepository = groupRepository;
 		this.groupCourseRepository = groupCourseRepository;
+		this.securityService = securityService;
 	}
 
 	public List<Group> findAll() {
@@ -51,6 +54,7 @@ public class GroupService {
 			throw new IllegalArgumentException("Group is not valid.");
 		}
 
+		securityService.setCurrentUserFromSecurityContext();
 		groupRepository.save(group);
 	}
 
@@ -60,6 +64,7 @@ public class GroupService {
 
 		if (optGroup.isPresent()) {
 
+			securityService.setCurrentUserFromSecurityContext();
 			groupRepository.delete(optGroup.get());
 
 		} else {
@@ -84,7 +89,7 @@ public class GroupService {
 		
 		Group newGroup = new Group(groupName);
 		
-		groupRepository.save(newGroup);
+		save(newGroup);
 	}
 
 	private boolean isGroupValid(Group group) {

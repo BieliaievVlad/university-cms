@@ -20,12 +20,16 @@ public class TeacherService {
 
 	private final TeacherRepository teacherRepository;
 	private final TeacherCourseRepository teacherCourseRepository;
+	private final SecurityService securityService;
 	Logger logger = LoggerFactory.getLogger(TeacherService.class);
 
 	@Autowired
-	public TeacherService(TeacherRepository teacherRepository, TeacherCourseRepository teacherCourseRepository) {
+	public TeacherService(TeacherRepository teacherRepository, 
+						  TeacherCourseRepository teacherCourseRepository, 
+						  SecurityService securityService) {
 		this.teacherRepository = teacherRepository;
 		this.teacherCourseRepository = teacherCourseRepository;
+		this.securityService = securityService;
 	}
 
 	public List<Teacher> findAll() {
@@ -51,6 +55,7 @@ public class TeacherService {
 			throw new IllegalArgumentException("Teacher is not valid.");
 		}
 
+		securityService.setCurrentUserFromSecurityContext();
 		teacherRepository.save(teacher);
 	}
 
@@ -60,6 +65,7 @@ public class TeacherService {
 
 		if (optTeacher.isPresent()) {
 
+			securityService.setCurrentUserFromSecurityContext();
 			teacherRepository.delete(optTeacher.get());
 
 		} else {

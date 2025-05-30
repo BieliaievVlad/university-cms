@@ -23,18 +23,21 @@ public class TeacherCourseService {
 	private final TeacherService teacherService;
 	private final GroupCourseService groupCourseService;
 	private final ScheduleService scheduleService;
+	private final SecurityService securityService;
 
 	@Autowired
 	public TeacherCourseService(TeacherCourseRepository repository, 
 								CourseService courseService, 
 								TeacherService teacherService, 
 								GroupCourseService groupCourseService,
-								ScheduleService scheduleService) {
+								ScheduleService scheduleService, 
+								SecurityService securityService) {
 		this.repository = repository;
 		this.courseService = courseService;
 		this.teacherService = teacherService;
 		this.groupCourseService = groupCourseService;
 		this.scheduleService = scheduleService;
+		this.securityService = securityService;
 	}
 	
 	public List<TeacherCourse> findAll() {
@@ -51,6 +54,7 @@ public class TeacherCourseService {
 			
 			TeacherCourse newTeacherCourse= new TeacherCourse(teacherCourse.getTeacher(),
 															  teacherCourse.getCourse());
+			securityService.setCurrentUserFromSecurityContext();
 			repository.save(newTeacherCourse);
 
 		} else {
@@ -67,6 +71,7 @@ public class TeacherCourseService {
 			
 			TeacherCourse newTeacherCourse= new TeacherCourse(teacherCourse.getTeacher(),
 					  										  teacherCourse.getCourse());
+			securityService.setCurrentUserFromSecurityContext();
 			repository.delete(newTeacherCourse);
 
 		} else {

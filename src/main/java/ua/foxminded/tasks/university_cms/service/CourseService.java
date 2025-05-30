@@ -21,12 +21,15 @@ public class CourseService {
 	private final CourseRepository courseRepository;
 	private final TeacherService teacherService;
 	private final GroupService groupService;
+	private final SecurityService securityService;
 	
 	@Autowired
-	public CourseService(CourseRepository courseRepository, TeacherService teacherService, GroupService groupService) {
+	public CourseService(CourseRepository courseRepository, TeacherService teacherService, 
+						 GroupService groupService, SecurityService securityService) {
 		this.courseRepository = courseRepository;
 		this.teacherService = teacherService;
 		this.groupService = groupService;
+		this.securityService = securityService;
 	}
 
 	public List<Course> findAll() {
@@ -47,20 +50,23 @@ public class CourseService {
 	}
 
 	public void save(Course course) {
-
+		
 		if (!isCourseValid(course)) {
 
 			throw new IllegalArgumentException("Course is not valid.");
 		}
+		
+		securityService.setCurrentUserFromSecurityContext();
 		courseRepository.save(course);
 	}
 
 	public void delete(Long courseId) {
 
 		Optional<Course> optCourse = courseRepository.findById(courseId);
-
+		
 		if (optCourse.isPresent()) {
-
+			
+			securityService.setCurrentUserFromSecurityContext();
 			courseRepository.delete(optCourse.get());
 
 		} else {
