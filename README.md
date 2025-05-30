@@ -1,44 +1,44 @@
 # University CMS  
 
-Приложение предназначено для взаимодействия с базой данных Postgres.  
+**University CMS** is a Spring Boot-based web application designed for management of university-related data.  
+The system enables authorized users to perform CRUD (Create, Read, Update, Delete) operations on courses, instructors, and students via an intuitive user interface.  
+It incorporates secure authentication mechanisms
 
-## Требования  
+## Requirements 
 
-- Java 17 (или более поздняя версия)  
+- Java 17 (or later)  
 - Maven  
 - PostgreSQL  
 - Docker Desktop
 
-## Сборка  
-1. Используйте команду из корневой папки проекта: 
+## Build
  
-	mvn clean package
+1. Run the following command from the root directory of the project:
+ 
+ 		mvn clean package
 
-## Установка  
-1. Создайте базу данных PostgreSQL 'univercity_cms'  
-2. Настройки по умолчанию:  
+## Setup  
+1. Create a PostgreSQL database named `univercity_cms`
+2. Default configuration:  
 
-	spring.application.name=University CMS  
+		spring.application.name=University CMS  
+		spring.datasource.url=jdbc:postgresql://localhost:5432/university_cms  
+		spring.datasource.username=postgres  
+		spring.datasource.password=123456  
+		spring.flyway.url=jdbc:postgresql://localhost:5432/university_cms  
+		spring.flyway.user=postgres  
+		spring.flyway.password=123456  
 
-	spring.datasource.url=jdbc:postgresql://localhost:5432/university_cms  
-	spring.datasource.username=postgres  
-	spring.datasource.password=123456  
+## Run
+1. Run the application from the `target` directory using the following command (adjust database credentials if needed):
 
-	spring.flyway.url=jdbc:postgresql://localhost:5432/university_cms  
-	spring.flyway.user=postgres  
-	spring.flyway.password=123456  
-
-## Запуск
-1. Запустите приложение, при необходимости указав параметры подключения к базе данных через командную строку из каталога 'target'.  
-Например:  
-
-	java -Dspring.datasource.username=postgres -Dspring.datasource.password=123456 -Dspring.flyway.user=postgres -Dspring.flyway.password=123456 -Dspring.config.name=application -jar university-cms-0.0.1-SNAPSHOT.jar
-
-По умолчанию приложение доступно по адресу:  
+    	java -Dspring.datasource.username=postgres -Dspring.datasource.password=123456 -Dspring.flyway.user=postgres -Dspring.flyway.password=123456 -Dspring.config.name=application -jar university-cms-0.0.1-SNAPSHOT.jar
+   
+By default, the application will be available at:
 
 	http://localhost:8080  
 	
-Учетная запись с правами администратора:
+Admin Account Credentials:
 
-	логин: admin
-	пароль:admin
+	login: admin
+	password:admin
